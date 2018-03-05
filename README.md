@@ -13,7 +13,7 @@ If you encounter any bugs or would like to see a feature added then please open 
 
 ## Download
 
-This package is available via [NuGet](https://www.nuget.org/packages/Mpv.WPF).
+This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 ## Usage
 
