@@ -17,7 +17,8 @@ namespace Mpv.NET
 		{
 			get
 			{
-				CheckDataPointer();
+				if (Format == MpvFormat.None || Data == IntPtr.Zero)
+					return null;
 
 				var innerPtrBytes = new byte[IntPtr.Size];
 				Marshal.Copy(Data, innerPtrBytes, 0, IntPtr.Size);
@@ -27,12 +28,6 @@ namespace Mpv.NET
 
 				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
 			}
-		}
-
-		private void CheckDataPointer()
-		{
-			if (Data == IntPtr.Zero)
-				throw new MpvException("Invalid data pointer.");
 		}
 	}
 }
