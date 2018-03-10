@@ -19,7 +19,7 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 ### Prerequisites
 
-To use the wrapper you will need libmpv.
+To use the wrapper (or user control) you will need libmpv.
 
 1. Download libmpv from https://mpv.srsfckn.biz/ ("dev" version)
 2. Extract "mpv-1.dll" from either the "32" or "64" directories into your project.
