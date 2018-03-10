@@ -100,5 +100,14 @@ namespace Mpv.NET.Interop
 
 			return (TDelegate)(object)Marshal.GetDelegateForFunctionPointer(functionPtr, typeof(TDelegate));
 		}
+
+		public static IntPtr GetInnerPtr(IntPtr ptr)
+		{
+			var innerPtrBytes = new byte[IntPtr.Size];
+			Marshal.Copy(ptr, innerPtrBytes, 0, IntPtr.Size);
+
+			var innerPtrValue = BitConverter.ToInt32(innerPtrBytes, 0);
+			return new IntPtr(innerPtrValue);
+		}
 	}
 }
