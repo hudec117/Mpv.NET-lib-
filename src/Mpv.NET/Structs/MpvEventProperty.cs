@@ -18,15 +18,22 @@ namespace Mpv.NET
 			get
 			{
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return null;
+					return default(string);
 
-				var innerPtrBytes = new byte[IntPtr.Size];
-				Marshal.Copy(Data, innerPtrBytes, 0, IntPtr.Size);
-
-				var innerPtrValue = BitConverter.ToInt32(innerPtrBytes, 0);
-				var innerPtr = new IntPtr(innerPtrValue);
+				var innerPtr = MpvMarshal.GetInnerPtr(Data);
 
 				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
+			}
+		}
+
+		public long DataLong
+		{
+			get
+			{
+				if (Format == MpvFormat.None || Data == IntPtr.Zero)
+					return default(long);
+
+				return Marshal.ReadInt64(Data);
 			}
 		}
 	}
