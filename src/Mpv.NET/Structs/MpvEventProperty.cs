@@ -19,31 +19,13 @@ namespace Mpv.NET
 			{
 				CheckDataPointer();
 
-				return MpvMarshal.GetManagedUTF8StringFromPtr(Data);
-			}
-		}
+				var innerPtrBytes = new byte[IntPtr.Size];
+				Marshal.Copy(Data, innerPtrBytes, 0, IntPtr.Size);
 
-		public long DataLong
-		{
-			get
-			{
-				CheckDataPointer();
+				var innerPtrValue = BitConverter.ToInt32(innerPtrBytes, 0);
+				var innerPtr = new IntPtr(innerPtrValue);
 
-				return Marshal.ReadInt64(Data);
-			}
-		}
-
-		public double DataDouble
-		{
-			get
-			{
-				CheckDataPointer();
-
-				var dataBytes = new byte[sizeof(double)];
-
-				Marshal.Copy(Data, dataBytes, 0, sizeof(double));
-
-				return BitConverter.ToDouble(dataBytes, 0);
+				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
 			}
 		}
 

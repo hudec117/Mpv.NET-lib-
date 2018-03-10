@@ -1,5 +1,4 @@
-﻿using Mpv.NET.Interop;
-using System;
+﻿using System;
 
 namespace Mpv.NET
 {
@@ -148,28 +147,31 @@ namespace Mpv.NET
 
 		private void HandleLogMessage(MpvEvent @event)
 		{
-			var logMessagePtr = @event.Data;
-			if (LogMessage == null || logMessagePtr == IntPtr.Zero)
+			if (LogMessage == null)
 				return;
 
-			var logMessage = MpvMarshal.PtrToStructure<MpvLogMessage>(logMessagePtr);
-
-			var eventArgs = new MpvLogMessageEventArgs(logMessage);
-			LogMessage.Invoke(this, eventArgs);
+			var logMessage = @event.MarshalDataToStruct<MpvLogMessage>();
+			if (logMessage.HasValue)
+			{
+				var eventArgs = new MpvLogMessageEventArgs(logMessage.Value);
+				LogMessage.Invoke(this, eventArgs);
+			}
 		}
 
 		private void HandleGetPropertyReply(MpvEvent @event)
 		{
-			var eventPropertyPtr = @event.Data;
-			if (GetPropertyReply == null || eventPropertyPtr == IntPtr.Zero)
+			if (GetPropertyReply == null)
 				return;
 
-			var replyUserData = @event.ReplyUserData;
-			var error = @event.Error;
-			var eventProperty = MpvMarshal.PtrToStructure<MpvEventProperty>(eventPropertyPtr);
+			var eventProperty = @event.MarshalDataToStruct<MpvEventProperty>();
+			if (eventProperty.HasValue)
+			{
+				var replyUserData = @event.ReplyUserData;
+				var error = @event.Error;
 
-			var eventArgs = new MpvGetPropertyReplyEventArgs(replyUserData, error, eventProperty);
-			GetPropertyReply.Invoke(this, eventArgs);
+				var eventArgs = new MpvGetPropertyReplyEventArgs(replyUserData, error, eventProperty.Value);
+				GetPropertyReply.Invoke(this, eventArgs);
+			}
 		}
 
 		private void HandleSetPropertyReply(MpvEvent @event)
@@ -198,39 +200,43 @@ namespace Mpv.NET
 
 		private void HandleEndFile(MpvEvent @event)
 		{
-			var eventEndFilePtr = @event.Data;
-			if (EndFile == null || eventEndFilePtr == IntPtr.Zero)
+			if (EndFile == null)
 				return;
 
-			var eventEndFile = MpvMarshal.PtrToStructure<MpvEventEndFile>(eventEndFilePtr);
-
-			var eventArgs = new MpvEndFileEventArgs(eventEndFile);
-			EndFile.Invoke(this, eventArgs);
+			var eventEndFile = @event.MarshalDataToStruct<MpvEventEndFile>();
+			if (eventEndFile.HasValue)
+			{
+				var eventArgs = new MpvEndFileEventArgs(eventEndFile.Value);
+				EndFile.Invoke(this, eventArgs);
+			}
 		}
 
 		private void HandleClientMessage(MpvEvent @event)
 		{
-			var eventClientMessagePtr = @event.Data;
-			if (ClientMessage == null || eventClientMessagePtr == IntPtr.Zero)
+			if (ClientMessage == null)
 				return;
 
-			var eventClientMessage = MpvMarshal.PtrToStructure<MpvEventClientMessage>(eventClientMessagePtr);
-
-			var eventArgs = new MpvClientMessageEventArgs(eventClientMessage);
-			ClientMessage.Invoke(this, eventArgs);
+			var eventClientMessage = @event.MarshalDataToStruct<MpvEventClientMessage>();
+			if (eventClientMessage.HasValue)
+			{
+				var eventArgs = new MpvClientMessageEventArgs(eventClientMessage.Value);
+				ClientMessage.Invoke(this, eventArgs);
+			}
 		}
 
 		private void HandlePropertyChange(MpvEvent @event)
 		{
-			var eventPropertyPtr = @event.Data;
-			if (PropertyChange == null || eventPropertyPtr == IntPtr.Zero)
+			if (PropertyChange == null)
 				return;
 
-			var replyUserData = @event.ReplyUserData;
-			var eventProperty = MpvMarshal.PtrToStructure<MpvEventProperty>(eventPropertyPtr);
+			var eventProperty = @event.MarshalDataToStruct<MpvEventProperty>();
+			if (eventProperty.HasValue)
+			{
+				var replyUserData = @event.ReplyUserData;
 
-			var eventArgs = new MpvPropertyChangeEventArgs(replyUserData, eventProperty);
-			PropertyChange.Invoke(this, eventArgs);
+				var eventArgs = new MpvPropertyChangeEventArgs(replyUserData, eventProperty.Value);
+				PropertyChange.Invoke(this, eventArgs);
+			}
 		}
 
 		private void InvokeSimple(EventHandler eventHandler)
