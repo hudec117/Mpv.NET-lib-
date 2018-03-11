@@ -1,7 +1,9 @@
-
 # Mpv<span />.NET
 
 A .NET wrapper for the [mpv](https://github.com/mpv-player/mpv) C API.
+
+[![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+[![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 
 #### Notes:
 
