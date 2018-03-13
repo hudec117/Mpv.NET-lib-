@@ -1,9 +1,9 @@
 # Mpv<span />.NET
 
-A .NET wrapper for the [mpv](https://github.com/mpv-player/mpv) C API.
-
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+
+A .NET wrapper for the [mpv](https://github.com/mpv-player/mpv) C API.
 
 #### Notes:
 
@@ -28,7 +28,7 @@ To use the wrapper (or user control) you will need libmpv.
     (A "lib" folder in your project is common practice)
 3. Include the file in your IDE and instruct your build system to copy the DLL to output.
     * In Visual Studio this can be achieved so:
-        1. In your Solution Explorer click the "Show All Files" button at the top.
+        1. In your Solution Explorer click the "Show All Files" button at the top. Make sure that you have your project selected.
         2. You should see the DLL show up, right click on it and select "Include In Project".
         3. Right click on the DLL and select "Properties", then change the value for "Copy to Output Directory" to "Copy Always".
 4. Done!
