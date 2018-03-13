@@ -8,16 +8,7 @@ namespace Mpv.NET
 	{
 		public bool IsRunning { get; private set; }
 
-		public Action<MpvEvent> Callback
-		{
-			get => callback;
-			set
-			{
-				Guard.AgainstNull(value, nameof(Callback));
-
-				callback = value;
-			}
-		}
+		public Action<MpvEvent> Callback { get; set; }
 
 		public IntPtr MpvHandle
 		{
@@ -42,7 +33,6 @@ namespace Mpv.NET
 			}
 		}
 
-		private Action<MpvEvent> callback;
 		private IntPtr mpvHandle;
 		private IMpvFunctions functions;
 
@@ -99,7 +89,7 @@ namespace Mpv.NET
 					continue;
 				}
 
-				callback(@event);
+				Callback?.Invoke(@event);
 			}
 		}
 	}
