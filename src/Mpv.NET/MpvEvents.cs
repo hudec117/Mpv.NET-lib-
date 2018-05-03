@@ -2,7 +2,7 @@
 
 namespace Mpv.NET
 {
-	public sealed partial class Mpv
+	public partial class Mpv
 	{
 		public event EventHandler Shutdown;
 		public event EventHandler<MpvLogMessageEventArgs> LogMessage;

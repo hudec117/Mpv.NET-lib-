@@ -3,7 +3,7 @@ using System;
 
 namespace Mpv.NET
 {
-	public class MpvFunctions : IMpvFunctions
+	public class MpvFunctions : IMpvFunctions/*, IDisposable*/
 	{
 		public MpvClientAPIVersion ClientAPIVersion			{ get; private set; }
 		public MpvErrorString ErrorString					{ get; private set; }
@@ -44,7 +44,7 @@ namespace Mpv.NET
 
 		private IntPtr dllHandle;
 
-		private bool disposed = false;
+		//private bool disposed = false;
 
 		public MpvFunctions(string dllPath)
 		{
@@ -83,7 +83,7 @@ namespace Mpv.NET
 			SetPropertyString		= LoadFunction<MpvSetPropertyString>("mpv_set_property_string");
 			SetPropertyAsync		= LoadFunction<MpvSetPropertyAsync>("mpv_set_property_async");
 			GetProperty				= LoadFunction<MpvGetProperty>("mpv_get_property");
-			GetPropertyString		= LoadFunction<MpvGetPropertyString>("mpv_get_property");
+			GetPropertyString		= LoadFunction<MpvGetPropertyString>("mpv_get_property_string");
 			GetPropertyOSDString	= LoadFunction<MpvGetPropertyOSDString>("mpv_get_property_osd_string");
 			GetPropertyAsync		= LoadFunction<MpvGetPropertyAsync>("mpv_get_property_async");
 			ObserveProperty			= LoadFunction<MpvObserveProperty>("mpv_observe_property");
@@ -110,23 +110,23 @@ namespace Mpv.NET
 			return delegateValue;
 		}
 
-		public void Dispose()
-		{
-			Dispose(true);
-		}
+		//public void Dispose()
+		//{
+		//	Dispose(true);
+		//}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (!disposed)
-				{
-					// Note: This seems to crash the application while a video is playing. Maybe this is not required?
-					//WinInterop.FreeLibrary(dllHandle);
-				}
+		//protected virtual void Dispose(bool disposing)
+		//{
+		//	if (disposing)
+		//	{
+		//		if (!disposed)
+		//		{
+		//			// Note: This seems to crash the application while a video is playing. Maybe this is not required?
+		//			//WinInterop.FreeLibrary(dllHandle);
+		//		}
 
-				disposed = true;
-			}
-		}
+		//		disposed = true;
+		//	}
+		//}
 	}
 }

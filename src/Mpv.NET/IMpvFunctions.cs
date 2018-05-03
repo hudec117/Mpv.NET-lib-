@@ -2,7 +2,7 @@
 
 namespace Mpv.NET
 {
-	public interface IMpvFunctions : IDisposable
+	public interface IMpvFunctions
 	{
 		MpvClientAPIVersion ClientAPIVersion			{ get; }
 		MpvErrorString ErrorString						{ get; }

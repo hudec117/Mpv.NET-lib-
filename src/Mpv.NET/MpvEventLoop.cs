@@ -1,23 +1,15 @@
 ﻿using Mpv.NET.Interop;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Mpv.NET
 {
-	public class MpvEventLoop
+	public class MpvEventLoop : IMpvEventLoop, IDisposable
 	{
 		public bool IsRunning { get; private set; }
 
-		public Action<MpvEvent> Callback
-		{
-			get => callback;
-			set
-			{
-				Guard.AgainstNull(value, nameof(Callback));
-
-				callback = value;
-			}
-		}
+		public Action<MpvEvent> Callback { get; set; }
 
 		public IntPtr MpvHandle
 		{
@@ -34,19 +26,18 @@ namespace Mpv.NET
 		public IMpvFunctions Functions
 		{
 			get => functions;
-			private set
+			set
 			{
-				Guard.AgainstNull(value, nameof(functions));
+				Guard.AgainstNull(value);
 
 				functions = value;
 			}
 		}
 
-		private Action<MpvEvent> callback;
 		private IntPtr mpvHandle;
 		private IMpvFunctions functions;
 
-		private Thread eventLoopThread;
+		private Task eventLoopTask;
 
 		private bool isStopping = false;
 
@@ -57,15 +48,16 @@ namespace Mpv.NET
 			Callback = callback;
 			MpvHandle = mpvHandle;
 			Functions = functions;
-
-			eventLoopThread = new Thread(EventLoopThreadHandler);
 		}
 
 		public void Start()
 		{
 			Guard.AgainstDisposed(disposed, nameof(MpvEventLoop));
 
-			eventLoopThread.Start();
+			DisposeEventLoopTask();
+
+			eventLoopTask = new Task(EventLoopThreadHandler);
+			eventLoopTask.Start();
 
 			IsRunning = true;
 		}
@@ -80,10 +72,12 @@ namespace Mpv.NET
 			// so we can stop it.
 			Functions.Wakeup(mpvHandle);
 
+			eventLoopTask.Wait();
+
 			IsRunning = false;
 		}
 
-		private void EventLoopThreadHandler(object state)
+		private void EventLoopThreadHandler()
 		{
 			while (IsRunning)
 			{
@@ -99,7 +93,32 @@ namespace Mpv.NET
 					continue;
 				}
 
-				callback(@event);
+				Callback?.Invoke(@event);
+			}
+		}
+
+		private void DisposeEventLoopTask()
+		{
+			eventLoopTask?.Dispose();
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (!disposed)
+				{
+					Stop();
+
+					DisposeEventLoopTask();
+				}
+
+				disposed = true;
 			}
 		}
 	}
