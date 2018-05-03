@@ -7,7 +7,7 @@ A .NET wrapper for the [mpv](https://github.com/mpv-player/mpv) C API.
 
 * This software is not yet ready to be used in a production environment.
 * No documentation has yet been written. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
-* The entirety of the C API has not yet been implemented.
+* The entirety of the mpv C API has not yet been implemented.
 
 If you encounter any bugs or would like to see a feature added then please open an issue. Contributions are very welcome!
 
@@ -72,30 +72,28 @@ If you are looking that start an event loop you will need to create an instance 
 var dllPath = @"lib\mpv-1.dll";
 
 // Create an instance of MpvFunctions.
-using (var functions = new MpvFunctions(dllPath))
-{
-	// Create mpv
-	var handle = functions.Create();
+var functions = new MpvFunctions(dllPath)
 
-	// Initialise mpv
-	functions.Initialise(handle);
+// Create mpv
+var handle = functions.Create();
+
+// Initialise mpv
+functions.Initialise(handle);
 	
-	// Create an instance of MpvEventLoop, passing in a callback argument
-	// which will be invoked when an event comes in.
-	using (var eventLoop = new MpvEventLoop(callback, handle, functions))
-	{
-		// Start the event loop.
-		eventLoop.Start();
-	}
+// Create an instance of MpvEventLoop, passing in a callback argument
+// which will be invoked when an event comes in.
+using (var eventLoop = new MpvEventLoop(callback, handle, functions))
+{
+	// Start the event loop.
+	eventLoop.Start();
 }
 ```
 
 The code above does not contain any error checking, most of the mpv functions return an MpvError which indicates whether an error has occured.
 
-## Related Projects
+## Related Project
 
 * [Mpv.WPF](https://github.com/hudec117/Mpv.WPF) - User control library containing the mpv player, powered by this wrapper and mpv.
-* Mpv.WinForms - Upcoming user control library for Windows Forms.
 
 ## Licensing
 
