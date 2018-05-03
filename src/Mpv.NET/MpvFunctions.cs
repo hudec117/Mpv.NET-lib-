@@ -44,7 +44,7 @@ namespace Mpv.NET
 
 		private IntPtr dllHandle;
 
-		private bool disposed = false;
+		//private bool disposed = false;
 
 		public MpvFunctions(string dllPath)
 		{
