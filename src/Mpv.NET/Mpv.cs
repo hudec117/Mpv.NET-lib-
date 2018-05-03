@@ -5,16 +5,30 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET
 {
-	public sealed partial class Mpv : IDisposable
+	public partial class Mpv : IDisposable
 	{
 		public IMpvFunctions Functions
 		{
 			get => functions;
-			private set
+			set
 			{
-				Guard.AgainstNull(value, nameof(Functions));
+				Guard.AgainstNull(value);
 
 				functions = value;
+			}
+		}
+
+		public IMpvEventLoop EventLoop
+		{
+			get => eventLoop;
+			set
+			{
+				Guard.AgainstNull(value);
+
+				if (!value.IsRunning)
+					value.Start();
+
+				eventLoop = value;
 			}
 		}
 
@@ -31,9 +45,8 @@ namespace Mpv.NET
 		}
 
 		private IMpvFunctions functions;
+		private IMpvEventLoop eventLoop;
 		private IntPtr handle;
-
-		private MpvEventLoop eventLoop;
 
 		private bool disposed = false;
 
@@ -43,14 +56,28 @@ namespace Mpv.NET
 
 			Functions = new MpvFunctions(dllPath);
 
-			Initialise();
+			InitialiseMpv();
+
+			eventLoop = new MpvEventLoop(EventCallback, Handle, Functions);
+			eventLoop.Start();
 		}
 
 		public Mpv(IMpvFunctions functions)
 		{
 			Functions = functions;
 
-			Initialise();
+			InitialiseMpv();
+
+			eventLoop = new MpvEventLoop(EventCallback, Handle, Functions);
+		}
+
+		public Mpv(IMpvFunctions functions, IMpvEventLoop eventLoop)
+		{
+			Functions = functions;
+
+			EventLoop = eventLoop;
+
+			InitialiseMpv();
 		}
 
 		internal Mpv(IntPtr handle, IMpvFunctions functions)
@@ -59,18 +86,6 @@ namespace Mpv.NET
 
 			Functions = functions;
 
-			StartEventLoop();
-		}
-
-		private void Initialise()
-		{
-			InitialiseMpv();
-
-			StartEventLoop();
-		}
-
-		private void StartEventLoop()
-		{
 			eventLoop = new MpvEventLoop(EventCallback, Handle, Functions);
 			eventLoop.Start();
 		}
@@ -110,6 +125,9 @@ namespace Mpv.NET
 		public void LoadConfigFile(string absolutePath)
 		{
 			Guard.AgainstDisposed(disposed, nameof(Mpv));
+
+			if (!Uri.TryCreate(absolutePath, UriKind.Absolute, out Uri _))
+				throw new ArgumentException("Path is not absolute.");
 
 			if (!File.Exists(absolutePath))
 				throw new FileNotFoundException("Config file not found.");
@@ -404,15 +422,18 @@ namespace Mpv.NET
 			GC.SuppressFinalize(this);
 		}
 
-		private void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed)
 				return;
 
 			if (disposing)
 			{
-				eventLoop.Stop();
-				Functions.Dispose();
+				if (EventLoop is IDisposable disposableEventLoop)
+					disposableEventLoop.Dispose();
+
+				if (Functions is IDisposable disposableFunctions)
+					disposableFunctions.Dispose();
 			}
 
 			Functions.TerminateDestroy(Handle);

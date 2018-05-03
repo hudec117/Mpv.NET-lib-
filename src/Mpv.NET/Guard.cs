@@ -10,6 +10,12 @@ namespace Mpv.NET
 				throw new ObjectDisposedException(objectName);
 		}
 
+		public static void AgainstNull(object value)
+		{
+			if (value == null)
+				throw new ArgumentNullException();
+		}
+
 		public static void AgainstNull(object value, string name)
 		{
 			if (value == null)

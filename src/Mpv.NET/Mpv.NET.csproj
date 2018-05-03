@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="EventArgs\MpvCommandReplyEventArgs.cs" />
     <Compile Include="EventArgs\MpvEndFileEventArgs.cs" />
+    <Compile Include="IMpvEventLoop.cs" />
     <Compile Include="MpvFunctionDeclarations.cs" />
     <Compile Include="EventArgs\MpvClientMessageEventArgs.cs" />
     <Compile Include="EventArgs\MpvGetPropertyReplyEventArgs.cs" />
