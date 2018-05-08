@@ -74,12 +74,14 @@ namespace Mpv.NET
 
 			eventLoopTask.Wait();
 
+			isStopping = false;
+
 			IsRunning = false;
 		}
 
 		private void EventLoopThreadHandler()
 		{
-			while (IsRunning)
+			while (IsRunning && !isStopping)
 			{
 				var eventPtr = Functions.WaitEvent(mpvHandle, Timeout.Infinite);
 				if (eventPtr == IntPtr.Zero)
@@ -87,13 +89,8 @@ namespace Mpv.NET
 
 				var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
 
-				if (@event.ID == MpvEventID.None && isStopping)
-				{
-					isStopping = false;
-					continue;
-				}
-
-				Callback?.Invoke(@event);
+				if (@event.ID != MpvEventID.None)
+					Callback?.Invoke(@event);
 			}
 		}
 
