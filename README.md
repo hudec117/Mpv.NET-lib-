@@ -50,6 +50,17 @@ This player was designed to work on Windows and tested in WPF and Windows Forms.
 
 To overlay controls over the top of the player please see this [issue](https://github.com/hudec117/Mpv.WPF/issues/3#issuecomment-396020211).
 
+### Initialisation
+
+`MpvPlayer` provides 2 constructors:
+1. `MpvPlayer(IntPtr hwnd)`
+2. `MpvPlayer(IntPtr hwnd, string libMpvPath)`
+
+When constructor #1 is used, the player attempts to load libmpv from: (in order)
+* LibMpvPath property
+* "mpv-1.dll"
+* "lib\mpv-1.dll"
+
 ### WPF
 
 Since WPF doesn't keep traditional HWND handles to controls we will need use a `System.Windows.Forms.Control` object (E.g. `Panel` or nearly any other WinForms control) to host the mpv instance.
