@@ -48,6 +48,8 @@ To embed an instance of mpv into your application, you will need to pass in a ha
 
 This player was designed to work on Windows and tested in WPF and Windows Forms. Not tested on other platforms.
 
+To overlay controls over the top of the player please see this [issue](https://github.com/hudec117/Mpv.WPF/issues/3#issuecomment-396020211).
+
 ### WPF
 
 Since WPF doesn't keep traditional HWND handles to controls we will need use a `System.Windows.Forms.Control` object (E.g. `Panel` or nearly any other WinForms control) to host the mpv instance.
