@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 
-Video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
+.NET video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
 
 #### Player Features
 
