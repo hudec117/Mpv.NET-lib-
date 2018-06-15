@@ -1,5 +1,5 @@
-﻿using Mpv.NET.Player;
-using System.Windows;
+﻿using System.Windows;
+using Mpv.NET.Player;
 
 namespace Mpv.NET.WPFExample
 {
