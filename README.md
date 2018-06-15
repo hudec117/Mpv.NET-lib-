@@ -1,12 +1,23 @@
-
 # Mpv<span />.NET
 
-A .NET wrapper for the [mpv](https://github.com/mpv-player/mpv) C API.
+[![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+[![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+
+Video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
+
+#### Player Features
+
+* Looping
+* Auto play
+* Asynchronous seeking
+* Simple setup and usage
+* Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
+* Optional youtube-dl support to play videos from hundreds of video sites.
+	* Change the desired video quality.
 
 #### Notes:
 
-* This software is not yet ready to be used in a production environment.
-* No documentation has yet been written. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
+* No documentation has yet been written for the C API. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
 * The entirety of the mpv C API has not yet been implemented.
 
 If you encounter any bugs or would like to see a feature added then please open an issue. Contributions are very welcome!
@@ -15,11 +26,9 @@ If you encounter any bugs or would like to see a feature added then please open 
 
 This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
-## Usage
+## Prerequisites
 
-### Prerequisites
-
-To use the wrapper you will need libmpv.
+To use the wrapper (and user control) you will need libmpv.
 
 1. Download libmpv from https://mpv.srsfckn.biz/ ("dev" version)
 2. Extract "mpv-1.dll" from either the "32" or "64" directories into your project.
@@ -33,10 +42,34 @@ To use the wrapper you will need libmpv.
 
 If you wish to compile libmpv yourself, there is a [guide](https://github.com/mpv-player/mpv/blob/master/DOCS/compile-windows.md) available in the mpv repository.
 
+## Player
+
+To embed an instance of mpv into your application, you will need to pass in a handle (HWND) into the constructor of the `MpvPlayer` class.
+
+This player was designed to work on Windows and tested in WPF and Windows Forms. Not tested on other platforms.
+
+### WPF
+
+Since WPF doesn't keep traditional HWND handles to controls we will need use a `System.Windows.Forms.Control` object (E.g. `Panel` or nearly any other WinForms control) to host the mpv instance.
+
+You will need to add a reference to `System.Windows.Forms`:
+* In Visual Studio this can be achieved so:
+    * Right click "References" in your project and click "Add Reference".
+    * Navigate to Assemblies, find `System.Windows.Forms`, make sure it's ticked and click "OK".
+
+See [Mpv.NET.WPFExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WPFExample) project for a basic example.
+
+### Windows Forms
+
+See [Mpv.NET.WinFormsExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WinFormsExample) project for a basic example.
+
+## API
+
+This "API" is a wrapper around the mpv C API defined in [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h) and it utilised by the player.
+
 ### Mpv
 
 Simplest way to create an instance of the mpv .NET API and load libmpv:
-
 ```csharp
 // Relative path to the DLL.
 var dllPath = @"lib\mpv-1.dll";
@@ -52,7 +85,6 @@ This will provide a friendly interface to the mpv C API and start an event loop 
 ### MpvFunctions
 
 If you are looking for a more direct approach to the C API you can create an instance of MpvFunctions which allows you to execute the loaded delegates directly:
-
 ```csharp
 var dllPath = @"lib\mpv-1.dll";
 
@@ -67,7 +99,6 @@ Be aware, this method does not raise events and an event loop would have to  be 
 ### MpvEventLoop
 
 If you are looking that start an event loop you will need to create an instance of MpvFunctions, create and initialise mpv, create an instance of MpvEventLoop and start it:
-
 ```csharp
 var dllPath = @"lib\mpv-1.dll";
 
@@ -90,10 +121,6 @@ using (var eventLoop = new MpvEventLoop(callback, handle, functions))
 ```
 
 The code above does not contain any error checking, most of the mpv functions return an MpvError which indicates whether an error has occured.
-
-## Related Project
-
-* [Mpv.WPF](https://github.com/hudec117/Mpv.WPF) - User control library containing the mpv player, powered by this wrapper and mpv.
 
 ## Licensing
 
