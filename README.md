@@ -49,6 +49,8 @@ This player was designed to work on Windows and tested in WPF and WinForms. Not 
 
 To overlay controls over the top of the player please see this [issue](https://github.com/hudec117/Mpv.WPF/issues/3#issuecomment-396020211).
 
+If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https://github.com/mysteryx93/MediaPlayerUI.NET). :)
+
 ### Initialisation
 
 `MpvPlayer` provides 2 constructors:
