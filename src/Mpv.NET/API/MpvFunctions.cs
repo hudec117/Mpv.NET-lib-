@@ -59,7 +59,7 @@ namespace Mpv.NET.API
 
 			dllHandle = WinFunctions.LoadLibrary(dllPath);
 			if (dllHandle == IntPtr.Zero)
-				throw new MpvException("Failed to load Mpv DLL.");
+				throw new MpvAPIException("Failed to load Mpv DLL.");
 		}
 
 		private void LoadFunctions()
@@ -105,7 +105,7 @@ namespace Mpv.NET.API
 		{
 			var delegateValue = MpvMarshal.LoadUnmanagedFunction<TDelegate>(dllHandle, name);
 			if (delegateValue == null)
-				throw new MpvException($"Failed to load Mpv \"{name}\" function.");
+				throw new MpvAPIException($"Failed to load Mpv \"{name}\" function.");
 
 			return delegateValue;
 		}
