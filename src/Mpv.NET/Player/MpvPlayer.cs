@@ -154,13 +154,13 @@ namespace Mpv.NET.Player
 				if (!IsMediaLoaded)
 					return TimeSpan.Zero;
 
-				long durationSeconds;
+				double duration;
 				lock (mpvLock)
 				{
-					durationSeconds = mpv.GetPropertyLong("duration");
+					duration = mpv.GetPropertyDouble("duration");
 				}
 
-				return TimeSpan.FromSeconds(durationSeconds);
+				return TimeSpan.FromSeconds(duration);
 			}
 		}
 
@@ -174,13 +174,13 @@ namespace Mpv.NET.Player
 				if (!IsMediaLoaded)
 					return TimeSpan.Zero;
 
-				long positionSeconds;
+				double position;
 				lock (mpvLock)
 				{
-					positionSeconds = mpv.GetPropertyLong("time-pos");
+					position = mpv.GetPropertyDouble("time-pos");
 				}
 
-				return TimeSpan.FromSeconds(positionSeconds);
+				return TimeSpan.FromSeconds(position);
 			}
 			set
 			{
@@ -189,13 +189,13 @@ namespace Mpv.NET.Player
 				if (value < TimeSpan.Zero || value > Duration)
 					throw new ArgumentOutOfRangeException("Desired position is out of range of the duration or less than zero.");
 
-				var totalSeconds = value.TotalSeconds;
+				var totalMilliseconds = value.TotalMilliseconds;
 
-				var totalSecondsString = totalSeconds.ToString(CultureInfo.InvariantCulture);
+				var totalMillisecondsString = totalMilliseconds.ToString(CultureInfo.InvariantCulture);
 
 				lock (mpvLock)
 				{
-					mpv.Command("seek", totalSecondsString, "absolute");
+					mpv.Command("seek", totalMillisecondsString, "absolute");
 				}
 			}
 		}
@@ -210,13 +210,13 @@ namespace Mpv.NET.Player
 				if (!IsMediaLoaded)
 					return TimeSpan.Zero;
 
-				long remainingSeconds;
+				double remaining;
 				lock (mpvLock)
 				{
-					remainingSeconds = mpv.GetPropertyLong("time-remaining");
+					remaining = mpv.GetPropertyDouble("time-remaining");
 				}
 
-				return TimeSpan.FromSeconds(remainingSeconds);
+				return TimeSpan.FromSeconds(remaining);
 			}
 		}
 
@@ -297,7 +297,7 @@ namespace Mpv.NET.Player
 		/// <summary>
 		/// Invoked when the Position ("time-pos" in mpv) property is changed. Event arguments contain the new position.
 		/// </summary>
-		public event EventHandler<PositionChangedEventArgs> PositionChanged;
+		public event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged;
 
 		private API.Mpv mpv;
 
@@ -347,6 +347,8 @@ namespace Mpv.NET.Player
 				InitialiseMpv("mpv-1.dll");
 			else if (File.Exists("lib\\mpv-1.dll"))
 				InitialiseMpv("lib\\mpv-1.dll");
+			else
+				throw new MpvPlayerException("Failed to find libmpv. Check your path.");
 
 			// Set defaults.
 			Volume = 50;
@@ -368,7 +370,7 @@ namespace Mpv.NET.Player
 
 			mpv.PropertyChange += MpvOnPropertyChange;
 
-			mpv.ObserveProperty("time-pos", MpvFormat.Int64, timePosUserData);
+			mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
 
 #if DEBUG
 			mpv.LogMessage += MpvOnLogMessage;
@@ -490,7 +492,7 @@ namespace Mpv.NET.Player
 
 				return true;
 			}
-			catch (MpvException exception)
+			catch (MpvAPIException exception)
 			{
 				return HandleCommandMpvException(exception);
 			}
@@ -511,7 +513,7 @@ namespace Mpv.NET.Player
 
 				return true;
 			}
-			catch (MpvException exception)
+			catch (MpvAPIException exception)
 			{
 				return HandleCommandMpvException(exception);
 			}
@@ -532,7 +534,7 @@ namespace Mpv.NET.Player
 
 				return true;
 			}
-			catch (MpvException exception)
+			catch (MpvAPIException exception)
 			{
 				return HandleCommandMpvException(exception);
 			}
@@ -556,7 +558,7 @@ namespace Mpv.NET.Player
 
 				return true;
 			}
-			catch (MpvException exception)
+			catch (MpvAPIException exception)
 			{
 				return HandleCommandMpvException(exception);
 			}
@@ -582,7 +584,7 @@ namespace Mpv.NET.Player
 
 				return true;
 			}
-			catch (MpvException exception)
+			catch (MpvAPIException exception)
 			{
 				return HandleCommandMpvException(exception);
 			}
@@ -686,16 +688,16 @@ namespace Mpv.NET.Player
 			switch (e.ReplyUserData)
 			{
 				case timePosUserData:
-					var newPosition = (int)eventProperty.DataLong;
+					var newPosition = eventProperty.DataDouble;
 
 					InvokePositionChanged(newPosition);
 					break;
 			}
 		}
 
-		private void InvokePositionChanged(int newPosition)
+		private void InvokePositionChanged(double newPosition)
 		{
-			var eventArgs = new PositionChangedEventArgs(newPosition);
+			var eventArgs = new MpvPlayerPositionChangedEventArgs(newPosition);
 			PositionChanged?.Invoke(this, eventArgs);
 		}
 
@@ -705,7 +707,7 @@ namespace Mpv.NET.Player
 				throw new InvalidOperationException("Operation could not be completed because no media file has been loaded.");
 		}
 
-		private static bool HandleCommandMpvException(MpvException exception)
+		private static bool HandleCommandMpvException(MpvAPIException exception)
 		{
 			if (exception.Error == MpvError.Command)
 				return false;

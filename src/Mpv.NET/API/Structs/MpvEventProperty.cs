@@ -20,6 +20,9 @@ namespace Mpv.NET.API
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
 					return default(string);
 
+				if (Format != MpvFormat.String)
+					throw new MpvAPIException("Data is not a string.");
+
 				var innerPtr = MpvMarshal.GetInnerPtr(Data);
 
 				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
@@ -33,7 +36,27 @@ namespace Mpv.NET.API
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
 					return default(long);
 
+				if (Format != MpvFormat.Int64)
+					throw new MpvAPIException("Data is not a long.");
+
 				return Marshal.ReadInt64(Data);
+			}
+		}
+
+		public double DataDouble
+		{
+			get
+			{
+				if (Format == MpvFormat.None || Data == IntPtr.Zero)
+					return default(double);
+
+				if (Format != MpvFormat.Double)
+					throw new MpvAPIException("Data is not a double.");
+
+				var doubleBytes = new byte[sizeof(double)];
+				Marshal.Copy(Data, doubleBytes, 0, sizeof(double));
+
+				return BitConverter.ToDouble(doubleBytes, 0);
 			}
 		}
 	}

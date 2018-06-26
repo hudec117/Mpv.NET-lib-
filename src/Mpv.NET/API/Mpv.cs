@@ -117,7 +117,7 @@ namespace Mpv.NET.API
 
 			var newHandle = Functions.CreateClient(Handle, out string name);
 			if (newHandle == IntPtr.Zero)
-				throw new MpvException("Failed to create new client.");
+				throw new MpvAPIException("Failed to create new client.");
 
 			return new Mpv(newHandle, Functions);
 		}
@@ -134,7 +134,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.LoadConfigFile(Handle, absolutePath);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, functions);
+				throw MpvAPIException.FromError(error, functions);
 		}
 
 		public long GetTimeUs()
@@ -160,7 +160,7 @@ namespace Mpv.NET.API
 
 				var error = Functions.SetOption(Handle, name, format, dataPtr);
 				if (error != MpvError.Success)
-					throw MpvException.FromError(error, Functions);
+					throw MpvAPIException.FromError(error, Functions);
 			}
 			finally
 			{
@@ -177,7 +177,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.SetOptionString(Handle, name, data);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 		}
 
 		public void Command(params string[] args)
@@ -190,13 +190,13 @@ namespace Mpv.NET.API
 
 			var argsPtr = MpvMarshal.GetComPtrForManagedUTF8StringArray(args, out IntPtr[] argsPtrs);
 			if (argsPtr == IntPtr.Zero)
-				throw new MpvException("Failed to convert string array to pointer array.");
+				throw new MpvAPIException("Failed to convert string array to pointer array.");
 
 			try
 			{
 				var error = Functions.Command(Handle, argsPtr);
 				if (error != MpvError.Success)
-					throw MpvException.FromError(error, Functions);
+					throw MpvAPIException.FromError(error, Functions);
 			}
 			finally
 			{
@@ -215,13 +215,13 @@ namespace Mpv.NET.API
 
 			var argsPtr = MpvMarshal.GetComPtrForManagedUTF8StringArray(args, out IntPtr[] argsPtrs);
 			if (argsPtr == IntPtr.Zero)
-				throw new MpvException("Failed to convert string array to pointer array.");
+				throw new MpvAPIException("Failed to convert string array to pointer array.");
 
 			try
 			{
 				var error = Functions.CommandAsync(Handle, replyUserData, argsPtr);
 				if (error != MpvError.Success)
-					throw MpvException.FromError(error, Functions);
+					throw MpvAPIException.FromError(error, Functions);
 			}
 			finally
 			{
@@ -248,7 +248,7 @@ namespace Mpv.NET.API
 
 				var error = Functions.SetProperty(Handle, name, format, dataPtr);
 				if (error != MpvError.Success)
-					throw MpvException.FromError(error, Functions);
+					throw MpvAPIException.FromError(error, Functions);
 			}
 			finally
 			{
@@ -264,7 +264,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.SetPropertyString(Handle, name, value);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 		}
 
 		public void SetPropertyAsync(string name, byte[] data, ulong replyUserData, MpvFormat format = MpvFormat.ByteArray)
@@ -285,7 +285,7 @@ namespace Mpv.NET.API
 
 				var error = Functions.SetPropertyAsync(Handle, replyUserData, name, format, dataPtr);
 				if (error != MpvError.Success)
-					throw MpvException.FromError(error, Functions);
+					throw MpvAPIException.FromError(error, Functions);
 			}
 			finally
 			{
@@ -318,7 +318,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.GetPropertyLong(Handle, name, MpvFormat.Int64, out long value);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 
 			return value;
 		}
@@ -330,7 +330,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.GetPropertyDouble(Handle, name, MpvFormat.Double, out double value);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 
 			return value;
 		}
@@ -342,7 +342,7 @@ namespace Mpv.NET.API
 
 			var stringPtr = Functions.GetPropertyString(Handle, name);
 			if (stringPtr == IntPtr.Zero)
-				throw new MpvException("Failed to get property string, invalid pointer.");
+				throw new MpvAPIException("Failed to get property string, invalid pointer.");
 
 			try
 			{
@@ -361,7 +361,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.ObserveProperty(Handle, replyUserData, name, format);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, functions);
+				throw MpvAPIException.FromError(error, functions);
 		}
 
 		public int UnobserveProperty(ulong registeredReplyUserData)
@@ -372,7 +372,7 @@ namespace Mpv.NET.API
 			if (result < 1)
 			{
 				var error = (MpvError)result;
-				throw MpvException.FromError(error, functions);
+				throw MpvAPIException.FromError(error, functions);
 			}
 
 			return result;
@@ -391,7 +391,7 @@ namespace Mpv.NET.API
 
 			var error = Functions.RequestEvent(Handle, eventID, enabled);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, functions);
+				throw MpvAPIException.FromError(error, functions);
 		}
 
 		public void RequestLogMessages(MpvLogLevel logLevel)
@@ -402,18 +402,18 @@ namespace Mpv.NET.API
 
 			var error = Functions.RequestLogMessages(Handle, stringLogLevel);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 		}
 
 		private void InitialiseMpv()
 		{
 			Handle = Functions.Create();
 			if (Handle == IntPtr.Zero)
-				throw new MpvException("Failed to create Mpv context.");
+				throw new MpvAPIException("Failed to create Mpv context.");
 
 			var error = Functions.Initialise(Handle);
 			if (error != MpvError.Success)
-				throw MpvException.FromError(error, Functions);
+				throw MpvAPIException.FromError(error, Functions);
 		}
 
 		public void Dispose()
