@@ -189,13 +189,13 @@ namespace Mpv.NET.Player
 				if (value < TimeSpan.Zero || value > Duration)
 					throw new ArgumentOutOfRangeException("Desired position is out of range of the duration or less than zero.");
 
-				var totalMilliseconds = value.TotalMilliseconds;
+				var totalSeconds = value.TotalSeconds;
 
-				var totalMillisecondsString = totalMilliseconds.ToString(CultureInfo.InvariantCulture);
+				var totalSecondsString = totalSeconds.ToString(CultureInfo.InvariantCulture);
 
 				lock (mpvLock)
 				{
-					mpv.Command("seek", totalMillisecondsString, "absolute");
+					mpv.Command("seek", totalSecondsString, "absolute");
 				}
 			}
 		}
