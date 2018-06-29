@@ -3,21 +3,22 @@
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 
-Video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
+.NET video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
 
 #### Player Features
 
 * Looping
-* Auto play
+* Auto-play
 * Asynchronous seeking
+* Change playback speed
 * Simple setup and usage
 * Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
 * Optional youtube-dl support to play videos from hundreds of video sites.
-	* Change the desired video quality.
+    * Change the desired video quality.
 
 #### Notes:
 
-* No documentation has yet been written for the C API. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
+* Very little documentation has been written for the C API wrapper. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
 * The entirety of the mpv C API has not yet been implemented.
 
 If you encounter any bugs or would like to see a feature added then please open an issue. Contributions are very welcome!
@@ -44,28 +45,65 @@ If you wish to compile libmpv yourself, there is a [guide](https://github.com/mp
 
 ## Player
 
-To embed an instance of mpv into your application, you will need to pass in a handle (HWND) into the constructor of the `MpvPlayer` class.
+This player was designed to work on Windows and tested in WPF and WinForms. Not tested on other platforms.
 
-This player was designed to work on Windows and tested in WPF and Windows Forms. Not tested on other platforms.
+To overlay controls over the top of the player please see this [issue](https://github.com/hudec117/Mpv.WPF/issues/3#issuecomment-396020211).
+
+If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https://github.com/mysteryx93/MediaPlayerUI.NET). :)
+
+### Initialisation
+
+`MpvPlayer` provides 2 constructors:
+1. `MpvPlayer(IntPtr hwnd)`
+2. `MpvPlayer(IntPtr hwnd, string libMpvPath)`
+
+Both constructors have a `hwnd` parameter, this is should be a handle to the host control.
+
+When constructor #1 is used, the player attempts to load libmpv from: (in order)
+* LibMpvPath property
+* "mpv-1.dll"
+* "lib\mpv-1.dll"
+
+When constructor #2 is used, you can specify which file to load libmpv from.
 
 ### WPF
 
-Since WPF doesn't keep traditional HWND handles to controls we will need use a `System.Windows.Forms.Control` object (E.g. `Panel` or nearly any other WinForms control) to host the mpv instance.
+Since WPF doesn't keep traditional handles to controls we will need to use a `System.Windows.Forms.Control` object (E.g. `Panel` or nearly any other WinForms control) to host the mpv instance.
 
-You will need to add a reference to `System.Windows.Forms`:
+First you will need to add a reference to `System.Windows.Forms` in your project:
 * In Visual Studio this can be achieved so:
     * Right click "References" in your project and click "Add Reference".
     * Navigate to Assemblies, find `System.Windows.Forms`, make sure it's ticked and click "OK".
 
+Next, you will need to reference the `System.Windows.Forms` namespace in XAML:
+
+```xml
+<Window ...
+        xmlns:windowsForms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        ...>
+```
+
+Then create a `WindowsFormsHost` with a `Panel` from WinForms:
+
+```xml
+<WindowsFormsHost>
+    <windowsForms:Panel x:Name="PlayerHost" />
+</WindowsFormsHost>
+```
+
+The `Panel` has a `Handle` property which you pass as the first argument to the `MpvPlayer` constructors.
+
 See [Mpv.NET.WPFExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WPFExample) project for a basic example.
 
-### Windows Forms
+### WinForms
+
+You can use any WinForms control, just pass the `Handle` property to the `MpvPlayer` constructor and you're set.
 
 See [Mpv.NET.WinFormsExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WinFormsExample) project for a basic example.
 
 ## API
 
-This "API" is a wrapper around the mpv C API defined in [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h) and it utilised by the player.
+This "API" is a wrapper around the mpv C API defined in [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h) and is utilised by the player.
 
 ### Mpv
 
@@ -76,7 +114,7 @@ var dllPath = @"lib\mpv-1.dll";
 
 using (var mpv = new Mpv(dllPath))
 {
-	// code
+    // code
 }
 ```
 
@@ -90,7 +128,7 @@ var dllPath = @"lib\mpv-1.dll";
 
 using (var mpvFunctions = new MpvFunctions(dllPath))
 {
-	// code
+    // code
 }
 ```
 
@@ -110,13 +148,13 @@ var handle = functions.Create();
 
 // Initialise mpv
 functions.Initialise(handle);
-	
+    
 // Create an instance of MpvEventLoop, passing in a callback argument
 // which will be invoked when an event comes in.
 using (var eventLoop = new MpvEventLoop(callback, handle, functions))
 {
-	// Start the event loop.
-	eventLoop.Start();
+    // Start the event loop.
+    eventLoop.Start();
 }
 ```
 

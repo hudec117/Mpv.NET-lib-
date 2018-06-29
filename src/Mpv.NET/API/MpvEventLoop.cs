@@ -56,10 +56,10 @@ namespace Mpv.NET.API
 
 			DisposeEventLoopTask();
 
+			IsRunning = true;
+
 			eventLoopTask = new Task(EventLoopThreadHandler);
 			eventLoopTask.Start();
-
-			IsRunning = true;
 		}
 
 		public void Stop()
