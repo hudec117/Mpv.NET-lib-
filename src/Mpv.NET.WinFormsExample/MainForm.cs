@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using Mpv.NET.Player;
+﻿using Mpv.NET.Player;
+using System.Windows.Forms;
 
 namespace Mpv.NET.WinFormsExample
 {
@@ -16,11 +16,11 @@ namespace Mpv.NET.WinFormsExample
 				Loop = true,
 				Volume = 50
 			};
-			player.Load("http://techslides.com/demos/sample-videos/small.mp4");
+			player.Load(@"http://techslides.com/demos/sample-videos/small.mp4");
 			player.Resume();
 		}
 
-		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+		private void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
 		{
 			player.Dispose();
 		}

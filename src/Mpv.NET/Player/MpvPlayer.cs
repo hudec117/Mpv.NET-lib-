@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using Mpv.NET.API;
+using System;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
-using Mpv.NET.API;
 
 #if DEBUG
 using System.Diagnostics;
@@ -189,13 +189,13 @@ namespace Mpv.NET.Player
 				if (value < TimeSpan.Zero || value > Duration)
 					throw new ArgumentOutOfRangeException("Desired position is out of range of the duration or less than zero.");
 
-				var totalMilliseconds = value.TotalMilliseconds;
+				var totalSeconds = value.TotalSeconds;
 
-				var totalMillisecondsString = totalMilliseconds.ToString(CultureInfo.InvariantCulture);
+				var totalSecondsString = totalSeconds.ToString(CultureInfo.InvariantCulture);
 
 				lock (mpvLock)
 				{
-					mpv.Command("seek", totalMillisecondsString, "absolute");
+					mpv.Command("seek", totalSecondsString, "absolute");
 				}
 			}
 		}
@@ -270,6 +270,16 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// Invoked when media is resumed.
+		/// </summary>
+		public event EventHandler MediaResumed;
+
+		/// <summary>
+		/// Invoked when media is paused.
+		/// </summary>
+		public event EventHandler MediaPaused;
+
+		/// <summary>
 		/// Invoked when media is loaded.
 		/// </summary>
 		public event EventHandler MediaLoaded;
@@ -306,11 +316,15 @@ namespace Mpv.NET.Player
 		private YouTubeDlVideoQuality ytdlVideoQuality;
 
 		private bool isYouTubeDlEnabled = false;
+
+		// External seeking is when SeekAsync is called.
+		private bool isExternalSeeking = false;
 		private bool isSeeking = false;
 
 		private TaskCompletionSource<object> seekCompletionSource;
 
 		private const int timePosUserData = 10;
+		private const int pauseUserData = 20;
 
 		private readonly object mpvLock = new object();
 
@@ -371,6 +385,7 @@ namespace Mpv.NET.Player
 			mpv.PropertyChange += MpvOnPropertyChange;
 
 			mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
+			mpv.ObserveProperty("pause", MpvFormat.String, pauseUserData);
 
 #if DEBUG
 			mpv.LogMessage += MpvOnLogMessage;
@@ -422,6 +437,8 @@ namespace Mpv.NET.Player
 		{
 			seekCompletionSource = new TaskCompletionSource<object>();
 
+			isExternalSeeking = true;
+
 			Position = newPosition;
 
 			return seekCompletionSource.Task;
@@ -470,9 +487,9 @@ namespace Mpv.NET.Player
 		/// <summary>
 		/// Goes to the start of the media file and resumes playback.
 		/// </summary>
-		public void Restart()
+		public async Task RestartAsync()
 		{
-			Position = TimeSpan.Zero;
+			await SeekAsync(TimeSpan.Zero);
 
 			Resume();
 		}
@@ -494,7 +511,7 @@ namespace Mpv.NET.Player
 			}
 			catch (MpvAPIException exception)
 			{
-				return HandleCommandMpvException(exception);
+				return HandleCommandMpvAPIException(exception);
 			}
 		}
 
@@ -515,7 +532,7 @@ namespace Mpv.NET.Player
 			}
 			catch (MpvAPIException exception)
 			{
-				return HandleCommandMpvException(exception);
+				return HandleCommandMpvAPIException(exception);
 			}
 		}
 
@@ -536,7 +553,7 @@ namespace Mpv.NET.Player
 			}
 			catch (MpvAPIException exception)
 			{
-				return HandleCommandMpvException(exception);
+				return HandleCommandMpvAPIException(exception);
 			}
 		}
 
@@ -560,7 +577,7 @@ namespace Mpv.NET.Player
 			}
 			catch (MpvAPIException exception)
 			{
-				return HandleCommandMpvException(exception);
+				return HandleCommandMpvAPIException(exception);
 			}
 		}
 
@@ -586,7 +603,7 @@ namespace Mpv.NET.Player
 			}
 			catch (MpvAPIException exception)
 			{
-				return HandleCommandMpvException(exception);
+				return HandleCommandMpvAPIException(exception);
 			}
 		}
 
@@ -624,7 +641,11 @@ namespace Mpv.NET.Player
 		{
 			if (isSeeking)
 			{
-				seekCompletionSource?.SetResult(null);
+				if (isExternalSeeking)
+				{
+					seekCompletionSource.SetResult(null);
+					isExternalSeeking = false;
+				}
 
 				MediaEndedSeeking?.Invoke(this, EventArgs.Empty);
 				isSeeking = false;
@@ -692,6 +713,14 @@ namespace Mpv.NET.Player
 
 					InvokePositionChanged(newPosition);
 					break;
+				case pauseUserData:
+					var paused = eventProperty.DataString;
+
+					if (paused == "yes")
+						MediaPaused?.Invoke(this, EventArgs.Empty);
+					else
+						MediaResumed?.Invoke(this, EventArgs.Empty);
+					break;
 			}
 		}
 
@@ -707,7 +736,7 @@ namespace Mpv.NET.Player
 				throw new InvalidOperationException("Operation could not be completed because no media file has been loaded.");
 		}
 
-		private static bool HandleCommandMpvException(MpvAPIException exception)
+		private static bool HandleCommandMpvAPIException(MpvAPIException exception)
 		{
 			if (exception.Error == MpvError.Command)
 				return false;
