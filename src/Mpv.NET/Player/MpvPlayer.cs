@@ -31,6 +31,21 @@ namespace Mpv.NET.Player
 		public string MediaTitle { get; private set; }
 
 		/// <summary>
+		/// Indicates whether media will automatically play when loaded.
+		/// </summary>
+		public bool AutoPlay { get; set; }
+
+		/// <summary>
+		/// True when media is loaded and ready for playback.
+		/// </summary>
+		public bool IsMediaLoaded { get; private set; }
+
+		/// <summary>
+		/// True if media is playing.
+		/// </summary>
+		public bool IsPlaying { get; private set; }
+
+		/// <summary>
 		/// The desired video quality to retrieve when loading streams from video sites.
 		/// </summary>
 		public YouTubeDlVideoQuality YouTubeDlVideoQuality
@@ -78,7 +93,9 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// If true, media will not be unloaded when playback finishes. Warning: The MediaUnloaded event will not be raised!
+		/// If true, media will not be unloaded when playback finishes.
+		/// Warning: The MediaUnloaded event will not be raised, use EndReached
+		/// property or MediaFinished event to detect end of playback instead.
 		/// </summary>
 		public KeepOpen KeepOpen
 		{
@@ -104,7 +121,7 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// If true, media will loop.
+		/// Determines whether media will loop.
 		/// </summary>
 		public bool Loop
 		{
@@ -116,11 +133,11 @@ namespace Mpv.NET.Player
 					stringValue = mpv.GetPropertyString("loop");
 				}
 
-				return LoopHelper.FromString(stringValue);
+				return MpvPlayerHelper.YesNoToBool(stringValue);
 			}
 			set
 			{
-				var stringValue = LoopHelper.ToString(value);
+				var stringValue = MpvPlayerHelper.BoolToYesNo(value);
 
 				lock (mpvLock)
 				{
@@ -130,19 +147,21 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// If true, when media is loaded it will automatically play.
+		/// Indicates whether media has reached end of playback.
 		/// </summary>
-		public bool AutoPlay { get; set; }
+		public bool EndReached
+		{
+			get
+			{
+				string stringValue;
+				lock (mpvLock)
+				{
+					stringValue = mpv.GetPropertyString("eof-reached");
+				}
 
-		/// <summary>
-		/// True when media is loaded and ready for playback.
-		/// </summary>
-		public bool IsMediaLoaded { get; private set; }
-
-		/// <summary>
-		/// True if media is playing.
-		/// </summary>
-		public bool IsPlaying { get; private set; }
+				return MpvPlayerHelper.YesNoToBool(stringValue);
+			}
+		}
 
 		/// <summary>
 		/// Duration of the media file. (As indicated by metadata)
@@ -165,7 +184,7 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// Time since the beginning of the media file.
+		/// Current position of playback in the media player.
 		/// </summary>
 		public TimeSpan Position
 		{
@@ -290,6 +309,11 @@ namespace Mpv.NET.Player
 		public event EventHandler MediaUnloaded;
 
 		/// <summary>
+		/// Invoked when media finished playback.
+		/// </summary>
+		public event EventHandler MediaFinished;
+
+		/// <summary>
 		/// Invoked when an error occurs with the media. (E.g. failed to load)
 		/// </summary>
 		public event EventHandler MediaError;
@@ -325,8 +349,36 @@ namespace Mpv.NET.Player
 
 		private const int timePosUserData = 10;
 		private const int pauseUserData = 20;
+		private const int eofReachedUserData = 30;
 
 		private readonly object mpvLock = new object();
+
+		/// <summary>
+		/// Creates an instance of MpvPlayer. This will let mpv create it's own window and
+		/// the libmpv will be searched for in default locations.
+		/// </summary>
+		public MpvPlayer() : this(IntPtr.Zero)
+		{
+		}
+
+		/// <summary>
+		/// Creates an instance of MpvPlayer. This will let mpv create it's own window.
+		/// </summary>
+		/// <param name="libMpvPath">Relative or absolute path to the libmpv DLL.</param>
+		public MpvPlayer(string libMpvPath) : this(IntPtr.Zero, libMpvPath)
+		{
+		}
+
+		/// <summary>
+		/// Creates an instance of MpvPlayer.
+		/// </summary>
+		/// <param name="hwnd">The windows handle that will host Mpv, such as one created with a WindowsFormsHost in WPF.</param>
+		public MpvPlayer(IntPtr hwnd)
+		{
+			this.hwnd = hwnd;
+
+			Initialise();
+		}
 
 		/// <summary>
 		/// Creates an instance of MpvPlayer using a specific libmpv DLL.
@@ -336,17 +388,6 @@ namespace Mpv.NET.Player
 		public MpvPlayer(IntPtr hwnd, string libMpvPath)
 		{
 			this.LibMpvPath = libMpvPath;
-			this.hwnd = hwnd;
-
-			Initialise();
-		}
-
-		/// <summary>
-		/// Creates an instance of MpvPlayer.
-		/// </summary>
-		/// <param name="hwnd">The windows handle that will host Mpv, such as one created with a WindowsFormsHost in WPF.</param>
-		public MpvPlayer(IntPtr hwnd)
-		{
 			this.hwnd = hwnd;
 
 			Initialise();
@@ -369,7 +410,8 @@ namespace Mpv.NET.Player
 			YouTubeDlVideoQuality = YouTubeDlVideoQuality.Highest;
 
 			// Set the host of the mpv player.
-			SetMpvHost(hwnd);
+			if (hwnd != IntPtr.Zero)
+				SetMpvHost(hwnd);
 		}
 
 		private void InitialiseMpv(string libMpvPath)
@@ -386,6 +428,7 @@ namespace Mpv.NET.Player
 
 			mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
 			mpv.ObserveProperty("pause", MpvFormat.String, pauseUserData);
+			mpv.ObserveProperty("eof-reached", MpvFormat.String, eofReachedUserData);
 
 #if DEBUG
 			mpv.LogMessage += MpvOnLogMessage;
@@ -720,6 +763,12 @@ namespace Mpv.NET.Player
 						MediaPaused?.Invoke(this, EventArgs.Empty);
 					else
 						MediaResumed?.Invoke(this, EventArgs.Empty);
+					break;
+				case eofReachedUserData:
+					var eofReached = eventProperty.DataString;
+
+					if (eofReached == "yes")
+						MediaFinished?.Invoke(this, EventArgs.Empty);
 					break;
 			}
 		}
