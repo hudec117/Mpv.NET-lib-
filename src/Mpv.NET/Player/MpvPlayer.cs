@@ -719,17 +719,24 @@ namespace Mpv.NET.Player
 
 			var eventEndFile = e.EventEndFile;
 
-			switch (eventEndFile.Reason)
+			if (eventEndFile.Reason == MpvEndFileReason.EndOfFile)
 			{
-				case MpvEndFileReason.EndOfFile:
-				case MpvEndFileReason.Stop:
-				case MpvEndFileReason.Quit:
-				case MpvEndFileReason.Redirect:
-					MediaUnloaded?.Invoke(this, EventArgs.Empty);
-					break;
-				case MpvEndFileReason.Error:
-					MediaError?.Invoke(this, EventArgs.Empty);
-					break;
+				MediaFinished?.Invoke(this, EventArgs.Empty);
+				MediaUnloaded?.Invoke(this, EventArgs.Empty);
+			}
+			else
+			{
+				switch (eventEndFile.Reason)
+				{
+					case MpvEndFileReason.Stop:
+					case MpvEndFileReason.Quit:
+					case MpvEndFileReason.Redirect:
+						MediaUnloaded?.Invoke(this, EventArgs.Empty);
+						break;
+					case MpvEndFileReason.Error:
+						MediaError?.Invoke(this, EventArgs.Empty);
+						break;
+				}
 			}
 		}
 
