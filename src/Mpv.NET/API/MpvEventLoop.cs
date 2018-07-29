@@ -58,7 +58,7 @@ namespace Mpv.NET.API
 
 			IsRunning = true;
 
-			eventLoopTask = new Task(EventLoopThreadHandler);
+			eventLoopTask = new Task(EventLoopTaskHandler);
 			eventLoopTask.Start();
 		}
 
@@ -71,7 +71,7 @@ namespace Mpv.NET.API
 			// Wake up WaitEvent in the event loop thread
 			// so we can stop it.
 			Functions.Wakeup(mpvHandle);
-
+			
 			eventLoopTask.Wait();
 
 			isStopping = false;
@@ -79,18 +79,17 @@ namespace Mpv.NET.API
 			IsRunning = false;
 		}
 
-		private void EventLoopThreadHandler()
+		private void EventLoopTaskHandler()
 		{
 			while (IsRunning && !isStopping)
 			{
 				var eventPtr = Functions.WaitEvent(mpvHandle, Timeout.Infinite);
-				if (eventPtr == IntPtr.Zero)
-					continue;
-
-				var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
-
-				if (@event.ID != MpvEventID.None)
-					Callback?.Invoke(@event);
+				if (eventPtr != IntPtr.Zero)
+				{
+					var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
+					if (@event.ID != MpvEventID.None)
+						Callback?.Invoke(@event);
+				}
 			}
 		}
 
