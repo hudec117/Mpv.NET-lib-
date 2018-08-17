@@ -331,14 +331,35 @@ namespace Mpv.NET.Player
 		/// <summary>
 		/// Invoked when the Position ("time-pos" in mpv) property is changed. Event arguments contain the new position.
 		/// </summary>
-		public event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged;
+		public event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged
+		{
+			add
+			{
+				lock (mpvLock)
+				{
+					mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
+				}
+
+				positionChanged += value;
+			}
+			remove
+			{
+				lock (mpvLock)
+				{
+					mpv.UnobserveProperty(timePosUserData);
+				}
+
+				positionChanged -= null;
+			}
+		}
 
 		private API.Mpv mpv;
 
 		private IntPtr hwnd;
 
-		private YouTubeDlVideoQuality ytdlVideoQuality;
+		private EventHandler<MpvPlayerPositionChangedEventArgs> positionChanged;
 
+		private YouTubeDlVideoQuality ytdlVideoQuality;
 		private bool isYouTubeDlEnabled = false;
 
 		// External seeking is when SeekAsync is called.
@@ -426,7 +447,6 @@ namespace Mpv.NET.Player
 
 			mpv.PropertyChange += MpvOnPropertyChange;
 
-			mpv.ObserveProperty("time-pos", MpvFormat.Double, timePosUserData);
 			mpv.ObserveProperty("pause", MpvFormat.String, pauseUserData);
 			mpv.ObserveProperty("eof-reached", MpvFormat.String, eofReachedUserData);
 
@@ -719,12 +739,15 @@ namespace Mpv.NET.Player
 
 			var eventEndFile = e.EventEndFile;
 
+			if (eventEndFile.Reason == MpvEndFileReason.EndOfFile)
+				MediaFinished?.Invoke(this, EventArgs.Empty);
+
 			switch (eventEndFile.Reason)
 			{
-				case MpvEndFileReason.EndOfFile:
 				case MpvEndFileReason.Stop:
 				case MpvEndFileReason.Quit:
 				case MpvEndFileReason.Redirect:
+				case MpvEndFileReason.EndOfFile:
 					MediaUnloaded?.Invoke(this, EventArgs.Empty);
 					break;
 				case MpvEndFileReason.Error:
@@ -776,7 +799,7 @@ namespace Mpv.NET.Player
 		private void InvokePositionChanged(double newPosition)
 		{
 			var eventArgs = new MpvPlayerPositionChangedEventArgs(newPosition);
-			PositionChanged?.Invoke(this, eventArgs);
+			positionChanged?.Invoke(this, eventArgs);
 		}
 
 		private void GuardAgainstNotLoaded()
