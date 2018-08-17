@@ -122,7 +122,7 @@ namespace Mpv.NET.API
 		//		if (!disposed)
 		//		{
 		//			// Note: This seems to crash the application while a video is playing. Maybe this is not required?
-		//			//WinInterop.FreeLibrary(dllHandle);
+		//			//WinFunctions.FreeLibrary(dllHandle);
 		//		}
 
 		//		disposed = true;
