@@ -10,7 +10,7 @@ local o = {
 options.read_options(o)
 
 local ytdl = {
-    path = "youtube-dl",
+    path = "lib\\youtube-dl.exe",
     searched = false,
     blacklisted = {}
 }
