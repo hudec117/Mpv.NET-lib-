@@ -59,7 +59,7 @@ namespace Mpv.NET.API
 
 			dllHandle = WinFunctions.LoadLibrary(dllPath);
 			if (dllHandle == IntPtr.Zero)
-				throw new MpvAPIException("Failed to load Mpv DLL.");
+				throw new MpvAPIException("Failed to load Mpv DLL. .NET apps by default are 32-bit so make sure you're loading the 32-bit DLL.");
 		}
 
 		private void LoadFunctions()

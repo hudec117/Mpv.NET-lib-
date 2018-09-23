@@ -558,6 +558,18 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// Load an audio track. Must be called after Load.
+		/// </summary>
+		/// <param name="path">Path to the audio track.</param>
+		public void AddAudio(string path)
+		{
+			lock (mpvLock)
+			{
+				mpv.Command("audio-add", path);
+			}
+		}
+
+		/// <summary>
 		/// Go to the next entry in the playlist.
 		/// </summary>
 		/// <returns>True if successful, false if not. False indicates that there are no entries after the current entry.</returns>
