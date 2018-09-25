@@ -3,10 +3,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-
-#if DEBUG
 using System.Diagnostics;
-#endif
 
 namespace Mpv.NET.Player
 {
@@ -44,6 +41,26 @@ namespace Mpv.NET.Player
 		/// True if media is playing.
 		/// </summary>
 		public bool IsPlaying { get; private set; }
+
+		/// <summary>
+		/// Set the logging level for mpv.
+		/// </summary>
+		public MpvLogLevel LogLevel
+		{
+			set
+			{
+				lock (mpvLock)
+				{
+					mpv.RequestLogMessages(value);
+				}
+
+				logLevel = value;
+			}
+			get
+			{
+				return logLevel;
+			}
+		}
 
 		/// <summary>
 		/// The desired video quality to retrieve when loading streams from video sites.
@@ -359,6 +376,8 @@ namespace Mpv.NET.Player
 
 		private EventHandler<MpvPlayerPositionChangedEventArgs> positionChanged;
 
+		private MpvLogLevel logLevel = MpvLogLevel.None;
+
 		private YouTubeDlVideoQuality ytdlVideoQuality;
 		private bool isYouTubeDlEnabled = false;
 
@@ -439,6 +458,8 @@ namespace Mpv.NET.Player
 		{
 			mpv = new API.Mpv(libMpvPath);
 
+			mpv.LogMessage += MpvOnLogMessage;
+
 			mpv.PlaybackRestart += MpvOnPlaybackRestart;
 			mpv.Seek += MpvOnSeek;
 
@@ -449,12 +470,6 @@ namespace Mpv.NET.Player
 
 			mpv.ObserveProperty("pause", MpvFormat.String, pauseUserData);
 			mpv.ObserveProperty("eof-reached", MpvFormat.String, eofReachedUserData);
-
-#if DEBUG
-			mpv.LogMessage += MpvOnLogMessage;
-
-			mpv.RequestLogMessages(MpvLogLevel.Info);
-#endif
 		}
 
 		private void SetMpvHost(IntPtr hwnd)
@@ -768,7 +783,6 @@ namespace Mpv.NET.Player
 			}
 		}
 
-#if DEBUG
 		private void MpvOnLogMessage(object sender, MpvLogMessageEventArgs e)
 		{
 			var message = e.Message;
@@ -776,9 +790,14 @@ namespace Mpv.NET.Player
 			var prefix = message.Prefix;
 			var text = message.Text;
 
-			Debug.Write($"[{prefix}] {text}");
-		}
+			var output = $"[{prefix}] {text}";
+
+#if DEBUG
+			Debug.Write(output);
+#else
+			Trace.Write(output);
 #endif
+		}
 
 		private void MpvOnPropertyChange(object sender, MpvPropertyChangeEventArgs e)
 		{
