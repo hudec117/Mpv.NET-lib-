@@ -12,6 +12,8 @@
 * Asynchronous seeking
 * Change playback speed
 * Simple setup and usage
+* Logging from mpv
+* Add separate audio track
 * Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
 * Optional youtube-dl support to play videos from hundreds of video sites.
     * Change the desired video quality.
@@ -31,12 +33,12 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 To use the wrapper (and user control) you will need libmpv.
 
-1. Download libmpv from https://mpv.srsfckn.biz/ ("dev" version)
-2. Extract "mpv-1.dll" from either the "32" or "64" directories into your project.
+1. Download libmpv from https://mpv.srsfckn.biz/ (latest "Dev" build)
+2. Extract "mpv-1.dll" from either the "i686" (32-bit) or "x86_64" (64-bit) folder into your project.
     (A "lib" folder in your project is common practice)
-3. Include the file in your IDE and instruct your build system to copy the DLL to output.
+3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
     * In Visual Studio this can be achieved so:
-        1. In your Solution Explorer click the "Show All Files" button at the top.
+        1. In your Solution Explorer click the "Show All Files" button at the top. (make sure you have the correct project selected)
         2. You should see the DLL show up, right click on it and select "Include In Project".
         3. Right click on the DLL and select "Properties", then change the value for "Copy to Output Directory" to "Copy Always".
 4. Done!
