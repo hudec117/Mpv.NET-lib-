@@ -12,6 +12,8 @@
 * Asynchronous seeking
 * Change playback speed
 * Simple setup and usage
+* Logging from mpv
+* Add separate audio track
 * Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
 * Optional youtube-dl support to play videos from hundreds of video sites.
     * Change the desired video quality.
@@ -31,12 +33,12 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 To use the wrapper (and user control) you will need libmpv.
 
-1. Download libmpv from https://mpv.srsfckn.biz/ ("dev" version)
-2. Extract "mpv-1.dll" from either the "32" or "64" directories into your project.
+1. Download libmpv from https://mpv.srsfckn.biz/ (latest "Dev" build)
+2. Extract "mpv-1.dll" from either the "i686" (32-bit) or "x86_64" (64-bit) folder into your project.
     (A "lib" folder in your project is common practice)
-3. Include the file in your IDE and instruct your build system to copy the DLL to output.
+3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
     * In Visual Studio this can be achieved so:
-        1. In your Solution Explorer click the "Show All Files" button at the top.
+        1. In your Solution Explorer click the "Show All Files" button at the top. (make sure you have the correct project selected)
         2. You should see the DLL show up, right click on it and select "Include In Project".
         3. Right click on the DLL and select "Properties", then change the value for "Copy to Output Directory" to "Copy Always".
 4. Done!
@@ -53,18 +55,20 @@ If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https
 
 ### Initialisation
 
-`MpvPlayer` provides 2 constructors:
-1. `MpvPlayer(IntPtr hwnd)`
-2. `MpvPlayer(IntPtr hwnd, string libMpvPath)`
+`MpvPlayer` provides 4 constructors:
+1. `MpvPlayer()`
+2. `MpvPlayer(string libMpvPath)`
+3. `MpvPlayer(IntPtr hwnd)`
+4. `MpvPlayer(IntPtr hwnd, string libMpvPath)`
 
-Both constructors have a `hwnd` parameter, this is should be a handle to the host control.
+Constructors #1 and #2 let mpv create it's own window and will not embed it.
 
-When constructor #1 is used, the player attempts to load libmpv from: (in order)
+Constructors #3 and #4 allow you to specify a `hwnd` parameter which should be the handle to the host control where you want to embed the player.
+
+For the constructors where `libMpvPath` is not included, the player attempts to load libmpv from: (in order)
 * LibMpvPath property
 * "mpv-1.dll"
 * "lib\mpv-1.dll"
-
-When constructor #2 is used, you can specify which file to load libmpv from.
 
 ### WPF
 
@@ -91,13 +95,18 @@ Then create a `WindowsFormsHost` with a `Panel` from WinForms:
 </WindowsFormsHost>
 ```
 
-The `Panel` has a `Handle` property which you pass as the first argument to the `MpvPlayer` constructors.
+In your `.xaml.cs` file create a field/property of type `MpvPlayer` and initialise it using one of the constructors outlined above.
+
+In this example we called our `Panel` object `PlayerHost` so for the `hwnd` parameter in the constructor you would pass in `PlayerHost.Handle` (see below)
+```csharp
+player = new MpvPlayer(PlayerHost.Handle);
+```
 
 See [Mpv.NET.WPFExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WPFExample) project for a basic example.
 
 ### WinForms
 
-You can use any WinForms control, just pass the `Handle` property to the `MpvPlayer` constructor and you're set.
+You can use any WinForms control, just pass the `Handle` property to the `MpvPlayer` constructor and you're done! Easy.
 
 See [Mpv.NET.WinFormsExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WinFormsExample) project for a basic example.
 
@@ -165,5 +174,7 @@ The code above does not contain any error checking, most of the mpv functions re
 The libmpv C API *specifically* is licensed under [ICS](https://choosealicense.com/licenses/isc/), this means that a wrapper such as this can be licensed under [MIT](https://choosealicense.com/licenses/mit/).
 
 The rest of libmpv is licensed under [GPLv2](https://choosealicense.com/licenses/gpl-2.0/) by default, which means that any work utilising this wrapper in conjunction with libmpv is subject to GPLv2, unless libmpv is compiled using [LGPL](https://choosealicense.com/licenses/lgpl-2.1/).
+
+In simple terms, once you use the "libmpv" files you downloaded with your application it must be licensed under GPLv2.
 
 See [here](https://github.com/mpv-player/mpv#license) for more information.

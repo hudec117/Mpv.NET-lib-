@@ -90,6 +90,17 @@ namespace Mpv.NET.API
 			eventLoop.Start();
 		}
 
+		private void InitialiseMpv()
+		{
+			Handle = Functions.Create();
+			if (Handle == IntPtr.Zero)
+				throw new MpvAPIException("Failed to create Mpv context.");
+
+			var error = Functions.Initialise(Handle);
+			if (error != MpvError.Success)
+				throw MpvAPIException.FromError(error, Functions);
+		}
+
 		public long ClientAPIVersion()
 		{
 			Guard.AgainstDisposed(disposed, nameof(Mpv));
@@ -401,17 +412,6 @@ namespace Mpv.NET.API
 			var stringLogLevel = MpvLogLevelHelper.GetStringForLogLevel(logLevel);
 
 			var error = Functions.RequestLogMessages(Handle, stringLogLevel);
-			if (error != MpvError.Success)
-				throw MpvAPIException.FromError(error, Functions);
-		}
-
-		private void InitialiseMpv()
-		{
-			Handle = Functions.Create();
-			if (Handle == IntPtr.Zero)
-				throw new MpvAPIException("Failed to create Mpv context.");
-
-			var error = Functions.Initialise(Handle);
 			if (error != MpvError.Success)
 				throw MpvAPIException.FromError(error, Functions);
 		}

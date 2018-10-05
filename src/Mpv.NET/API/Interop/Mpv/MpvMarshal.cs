@@ -11,7 +11,7 @@ namespace Mpv.NET.API.Interop
 		{
 			Guard.AgainstNull(@string, nameof(@string));
 
-			@string += "\0";
+			@string += '\0';
 
 			var stringBytes = Encoding.UTF8.GetBytes(@string);
 			var stringBytesCount = stringBytes.Length;
@@ -29,7 +29,9 @@ namespace Mpv.NET.API.Interop
 
 			var stringBytes = new List<byte>();
 			var offset = 0;
-			while (true)
+			
+			// Just to be safe!
+			while (offset < short.MaxValue)
 			{
 				var @byte = Marshal.ReadByte(stringPtr, offset);
 				if (@byte == '\0')
@@ -99,15 +101,6 @@ namespace Mpv.NET.API.Interop
 				return null;
 
 			return (TDelegate)(object)Marshal.GetDelegateForFunctionPointer(functionPtr, typeof(TDelegate));
-		}
-
-		public static IntPtr GetInnerPtr(IntPtr ptr)
-		{
-			var innerPtrBytes = new byte[IntPtr.Size];
-			Marshal.Copy(ptr, innerPtrBytes, 0, IntPtr.Size);
-
-			var innerPtrValue = BitConverter.ToInt32(innerPtrBytes, 0);
-			return new IntPtr(innerPtrValue);
 		}
 	}
 }

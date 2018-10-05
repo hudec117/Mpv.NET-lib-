@@ -23,7 +23,7 @@ namespace Mpv.NET.API
 				if (Format != MpvFormat.String)
 					throw new MpvAPIException("Data is not a string.");
 
-				var innerPtr = MpvMarshal.GetInnerPtr(Data);
+				var innerPtr = Marshal.ReadIntPtr(Data);
 
 				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
 			}

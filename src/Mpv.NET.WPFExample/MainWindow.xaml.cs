@@ -20,7 +20,7 @@ namespace Mpv.NET.WPFExample
 			player.Resume();
 		}
 
-		private void WindowOnClosed(object sender, System.EventArgs e)
+		private void WindowOnClosing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			player.Dispose();
 		}

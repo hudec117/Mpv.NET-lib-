@@ -20,7 +20,7 @@ namespace Mpv.NET.WinFormsExample
 			player.Resume();
 		}
 
-		private void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
+		private void MainFormOnFormClosing(object sender, FormClosingEventArgs e)
 		{
 			player.Dispose();
 		}
