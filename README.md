@@ -95,6 +95,11 @@ Then create a `WindowsFormsHost` with a `Panel` from WinForms:
 </WindowsFormsHost>
 ```
 
+If `WindowsFormHost` isn't found you will need to add a reference to `WindowsFormsIntegration` to your project:
+* Just as above: this can be achieved in Visual Studio by:
+    * Right clicking "References" in your project and clicking "Add Reference".
+    * Navigating to Assemblies, finding `WindowsFormsIntegration`, making sure it's ticked and clicking "OK".
+
 In your `.xaml.cs` file create a field/property of type `MpvPlayer` and initialise it using one of the constructors outlined above.
 
 In this example we called our `Panel` object `PlayerHost` so for the `hwnd` parameter in the constructor you would pass in `PlayerHost.Handle` (see below)
