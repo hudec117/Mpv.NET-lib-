@@ -3,17 +3,17 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET.API.Interop
 {
-	internal class WinFunctions
+	internal static class WinFunctions
 	{
-		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms684175(v=vs.85).aspx
+		// https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-loadlibrarya
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
 		public static extern IntPtr LoadLibrary(string lpFileName);
 
-		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms683152(v=vs.85).aspx
+		// https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-freelibrary
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
 		public static extern int FreeLibrary(IntPtr hModule);
 
-		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms683212(v=vs.85).aspx
+		// https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-getprocaddress
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
 		public static extern IntPtr GetProcAddress(IntPtr hModule, string lProcName);
 	}
