@@ -49,7 +49,7 @@ If you wish to compile libmpv yourself, there is a [guide](https://github.com/mp
 
 This player was designed to work on Windows and tested in WPF and WinForms. Not tested on other platforms.
 
-To overlay controls over the top of the player please see this [issue](https://github.com/hudec117/Mpv.WPF/issues/3#issuecomment-396020211).
+To overlay controls over the top of the player please start with this [Stack Overflow post](https://stackoverflow.com/questions/5978917/render-wpf-control-on-top-of-windowsformshost).
 
 If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https://github.com/mysteryx93/MediaPlayerUI.NET). :)
 
@@ -102,7 +102,7 @@ If `WindowsFormHost` isn't found you will need to add a reference to `WindowsFor
 
 In your `.xaml.cs` file create a field/property of type `MpvPlayer` and initialise it using one of the constructors outlined above.
 
-In this example we called our `Panel` object `PlayerHost` so for the `hwnd` parameter in the constructor you would pass in `PlayerHost.Handle` (see below)
+In this example we called our `Panel` object `PlayerHost` so for the `hwnd` parameter in the constructor you would pass in `PlayerHost.Handle` like so:
 ```csharp
 player = new MpvPlayer(PlayerHost.Handle);
 ```
@@ -180,6 +180,6 @@ The libmpv C API *specifically* is licensed under [ICS](https://choosealicense.c
 
 The rest of libmpv is licensed under [GPLv2](https://choosealicense.com/licenses/gpl-2.0/) by default, which means that any work utilising this wrapper in conjunction with libmpv is subject to GPLv2, unless libmpv is compiled using [LGPL](https://choosealicense.com/licenses/lgpl-2.1/).
 
-In simple terms, once you use the "libmpv" files you downloaded with your application it must be licensed under GPLv2.
+In simple terms, once you use the "libmpv" files (DLL) you downloaded, your application must be licensed under GPLv2.
 
 See [here](https://github.com/mpv-player/mpv#license) for more information.
