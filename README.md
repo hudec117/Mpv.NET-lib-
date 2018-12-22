@@ -15,7 +15,7 @@
 * Logging from mpv
 * Add separate audio track
 * Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
-* Optional youtube-dl support to play videos from hundreds of video sites.
+* Optional [youtube-dl](https://rg3.github.io/youtube-dl/index.html) support to play videos from [hundreds of video sites](https://rg3.github.io/youtube-dl/supportedsites.html).
     * Change the desired video quality.
 
 #### Notes:
@@ -31,9 +31,11 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 ## Prerequisites
 
-To use the wrapper (and user control) you will need libmpv.
+### libmpv
 
-1. Download libmpv from https://mpv.srsfckn.biz/ (latest "Dev" build)
+To use the API wrapper (and player) you will need libmpv.
+
+1. Download libmpv from [here](https://mpv.srsfckn.biz/). (latest "Dev" build)
 2. Extract "mpv-1.dll" from either the "i686" (32-bit) or "x86_64" (64-bit) folder into your project.
     (A "lib" folder in your project is common practice)
 3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
@@ -44,6 +46,22 @@ To use the wrapper (and user control) you will need libmpv.
 4. Done!
 
 If you wish to compile libmpv yourself, there is a [guide](https://github.com/mpv-player/mpv/blob/master/DOCS/compile-windows.md) available in the mpv repository.
+
+### youtube-dl
+
+To enable youtube-dl functionality in the player you will need the youtube-dl executable and the ytdl hook script from mpv which allows mpv to communicate with youtube-dl.
+
+1. Download the "youtube-dl.exe" executable from [here](https://rg3.github.io/youtube-dl/download.html).
+2. Download the "ytdl_hook.lua" script from [here](https://github.com/mpv-player/mpv/blob/master/player/lua/ytdl_hook.lua).
+3. Copy both files to your "lib" folder you made for libmpv.
+4. Follow step #3 in the libmpv section but perform the steps on the "ytdl_hook.lua" script and "youtube-dl.exe" executable instead.
+5. Open "ytdl_hook.lua" and change line 13 to 
+`path = "lib\\youtube-dl.exe",`
+6. In your code, you will need to call the `EnableYouTubeDl` method on an instance of `MpvPlayer`.
+    * If you placed your "ytdl_hook.lua" script somewhere other than the "lib" folder, you will need to pass the relative (to your apps executable) or absolute path of the script to `EnableYouTubeDl`.
+7. Done!
+
+If you have any doubts or questions regarding this process, please feel free to open an issue.
 
 ## Player
 
@@ -114,6 +132,12 @@ See [Mpv.NET.WPFExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv
 You can use any WinForms control, just pass the `Handle` property to the `MpvPlayer` constructor and you're done! Easy.
 
 See [Mpv.NET.WinFormsExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WinFormsExample) project for a basic example.
+
+### youtube-dl settings
+
+You have the option to set the desired quality of the media you're trying to play using youtube-dl.
+This can be changed by setting the `YouTubeDlVideoQuality` property on an instance of `MpvPlayer`.
+Note: this will take effect on the next call of `Load`.
 
 ## API
 
