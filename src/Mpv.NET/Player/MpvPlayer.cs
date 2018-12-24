@@ -392,6 +392,12 @@ namespace Mpv.NET.Player
 		private const int pauseUserData = 20;
 		private const int eofReachedUserData = 30;
 
+		private readonly string[] possibleLibMpvPaths = new string[]
+		{
+			"mpv-1.dll",
+			@"lib\mpv-1.dll"
+		};
+
 		private readonly string[] possibleYtdlHookPaths = new string[]
 		{
 			"ytdl_hook.lua",
@@ -447,12 +453,14 @@ namespace Mpv.NET.Player
 			// Initialise the API.
 			if (!string.IsNullOrEmpty(LibMpvPath))
 				InitialiseMpv(LibMpvPath);
-			else if (File.Exists("mpv-1.dll"))
-				InitialiseMpv("mpv-1.dll");
-			else if (File.Exists("lib\\mpv-1.dll"))
-				InitialiseMpv("lib\\mpv-1.dll");
 			else
-				throw new MpvPlayerException("Failed to find libmpv. Check your path.");
+			{
+				var foundPath = possibleLibMpvPaths.FirstOrDefault(File.Exists);
+				if (foundPath != null)
+					InitialiseMpv(foundPath);
+				else
+					throw new MpvPlayerException("Failed to find libmpv. Check your path.");
+			}
 
 			// Set defaults.
 			Volume = 50;
