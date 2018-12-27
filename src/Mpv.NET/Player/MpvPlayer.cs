@@ -524,17 +524,31 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// Seek to the specified position.
+		/// Seek using the specified position. Seeking absolutely by default.
 		/// </summary>
-		/// <param name="newPosition">The new position.</param>
-		/// <returns>Task that will complete when seeking is finished.</returns>
-		public Task SeekAsync(TimeSpan newPosition)
+		/// <param name="position">Position in seconds.</param>
+		/// <param name="relative"></param>
+		/// <returns>Task that will complete when seeking completes.</returns>
+		public Task SeekAsync(double position, bool relative = false)
+		{
+			return SeekAsync(TimeSpan.FromSeconds(position), relative);
+		}
+
+		/// <summary>
+		/// Seek using the specified position. Seeking absolutely by default.
+		/// </summary>
+		/// <param name="relative">If true, the given position is added to the current position.</param>
+		/// <returns>Task that will complete when seeking completes.</returns>
+		public Task SeekAsync(TimeSpan position, bool relative = false)
 		{
 			seekCompletionSource = new TaskCompletionSource<object>();
 
 			isExternalSeeking = true;
 
-			Position = newPosition;
+			if (relative)
+				Position += position;
+			else
+				Position = position;
 
 			return seekCompletionSource.Task;
 		}
