@@ -1,9 +1,10 @@
 ﻿using Mpv.NET.API;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Mpv.NET.Player
 {
@@ -391,6 +392,20 @@ namespace Mpv.NET.Player
 		private const int pauseUserData = 20;
 		private const int eofReachedUserData = 30;
 
+		private readonly string[] possibleLibMpvPaths = new string[]
+		{
+			"mpv-1.dll",
+			@"lib\mpv-1.dll"
+		};
+
+		private readonly string[] possibleYtdlHookPaths = new string[]
+		{
+			"ytdl_hook.lua",
+			"ytdl.lua",
+			@"lib\ytdl_hook.lua",
+			@"lib\ytdl.lua"
+		};
+
 		private readonly object mpvLock = new object();
 
 		/// <summary>
@@ -438,12 +453,14 @@ namespace Mpv.NET.Player
 			// Initialise the API.
 			if (!string.IsNullOrEmpty(LibMpvPath))
 				InitialiseMpv(LibMpvPath);
-			else if (File.Exists("mpv-1.dll"))
-				InitialiseMpv("mpv-1.dll");
-			else if (File.Exists("lib\\mpv-1.dll"))
-				InitialiseMpv("lib\\mpv-1.dll");
 			else
-				throw new MpvPlayerException("Failed to find libmpv. Check your path.");
+			{
+				var foundPath = possibleLibMpvPaths.FirstOrDefault(File.Exists);
+				if (foundPath != null)
+					InitialiseMpv(foundPath);
+				else
+					throw new MpvPlayerException("Failed to find libmpv. Check your path.");
+			}
 
 			// Set defaults.
 			Volume = 50;
@@ -507,17 +524,31 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
-		/// Seek to the specified position.
+		/// Seek using the specified position. Seeking absolutely by default.
 		/// </summary>
-		/// <param name="newPosition">The new position.</param>
-		/// <returns>Task that will complete when seeking is finished.</returns>
-		public Task SeekAsync(TimeSpan newPosition)
+		/// <param name="position">Position in seconds.</param>
+		/// <param name="relative"></param>
+		/// <returns>Task that will complete when seeking completes.</returns>
+		public Task SeekAsync(double position, bool relative = false)
+		{
+			return SeekAsync(TimeSpan.FromSeconds(position), relative);
+		}
+
+		/// <summary>
+		/// Seek using the specified position. Seeking absolutely by default.
+		/// </summary>
+		/// <param name="relative">If true, the given position is added to the current position.</param>
+		/// <returns>Task that will complete when seeking completes.</returns>
+		public Task SeekAsync(TimeSpan position, bool relative = false)
 		{
 			seekCompletionSource = new TaskCompletionSource<object>();
 
 			isExternalSeeking = true;
 
-			Position = newPosition;
+			if (relative)
+				Position += position;
+			else
+				Position = position;
 
 			return seekCompletionSource.Task;
 		}
@@ -709,15 +740,39 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// Enable youtube-dl functionality in mpv. This methods attempts to load the ytdl hook script from:
+		/// "ytdl_hook.lua",
+		/// "ytdl.lua",
+		/// "lib\ytdl_hook.lua" and
+		/// "lib\ytdl.lua"
+		/// </summary>
+		/// <exception cref="FileNotFoundException">Thrown when none of the ytdl hook scripts are found.</exception>
+		public void EnableYouTubeDl()
+		{
+			if (isYouTubeDlEnabled)
+				return;
+
+			var foundPath = possibleYtdlHookPaths.FirstOrDefault(File.Exists);
+			if (foundPath != default(string))
+				EnableYouTubeDl(foundPath);
+			else
+				throw new FileNotFoundException("Cannot find ytdl hook script.");
+		}
+
+		/// <summary>
 		/// Enable youtube-dl functionality in mpv.
 		/// </summary>
-		/// <param name="ytdlHookScriptPath">Relative or absolute path to the "ytdl_hook.lua" script.</param>
+		/// <param name="ytdlHookScriptPath">Relative or absolute path to the ytdl hook script. (usually called "ytdl_hook.lua")</param>
+		/// <exception cref="FileNotFoundException">Throw when the ytdl hook script is not found.</exception>
 		public void EnableYouTubeDl(string ytdlHookScriptPath)
 		{
 			if (isYouTubeDlEnabled)
 				return;
 
 			Guard.AgainstNullOrEmptyOrWhiteSpaceString(ytdlHookScriptPath, nameof(ytdlHookScriptPath));
+
+			if (!File.Exists(ytdlHookScriptPath))
+				throw new FileNotFoundException("Cannot find ytdl hook script.");
 
 			lock (mpvLock)
 			{
