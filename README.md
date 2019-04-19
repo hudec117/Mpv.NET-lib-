@@ -61,6 +61,8 @@ To enable youtube-dl functionality in the player you will need the youtube-dl ex
     * If you placed your "ytdl_hook.lua" script somewhere other than the "lib" folder, you will need to pass the relative (to your apps executable) or absolute path of the script to `EnableYouTubeDl`.
 7. Done!
 
+If youtube-dl stops working after working fine, first try updating the executable with the latest version.
+
 If you have any doubts or questions regarding this process, please feel free to open an issue.
 
 ## Player
