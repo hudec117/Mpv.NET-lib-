@@ -44,6 +44,37 @@ namespace Mpv.NET.Player
 		public bool IsPlaying { get; private set; }
 
 		/// <summary>
+		/// True if media is paused waiting for the cache to be filled. This indicates whether the media is "buffering"
+		/// </summary>
+		public bool IsPausedForCache
+		{
+			get
+			{
+				string yesNoString;
+				lock (mpvLock)
+				{
+					yesNoString = mpv.GetPropertyString("paused-for-cache");
+				}
+
+				return MpvPlayerHelper.YesNoToBool(yesNoString);
+			}
+		}
+
+		/// <summary>
+		/// In seconds, the approximate duration of video buffered.
+		/// </summary>
+		public double CacheDuration
+		{
+			get
+			{
+				lock (mpvLock)
+				{
+					return mpv.GetPropertyDouble("cache-duration");
+				}
+			}
+		}
+
+		/// <summary>
 		/// Set the logging level for mpv.
 		/// </summary>
 		public MpvLogLevel LogLevel
@@ -317,6 +348,16 @@ namespace Mpv.NET.Player
 		public event EventHandler MediaPaused;
 
 		/// <summary>
+		/// Invoked when media started buffering.
+		/// </summary>
+		public event EventHandler MediaStartedBuffering;
+
+		/// <summary>
+		/// Invoked when media ended buffering.
+		/// </summary>
+		public event EventHandler MediaEndedBuffering;
+
+		/// <summary>
 		/// Invoked when media is loaded.
 		/// </summary>
 		public event EventHandler MediaLoaded;
@@ -332,7 +373,7 @@ namespace Mpv.NET.Player
 		public event EventHandler MediaFinished;
 
 		/// <summary>
-		/// Invoked when an error occurs with the media. (E.g. failed to load)
+		/// Invoked when an error occurs with the media. (e.g. failed to load)
 		/// </summary>
 		public event EventHandler MediaError;
 
@@ -391,6 +432,7 @@ namespace Mpv.NET.Player
 		private const int timePosUserData = 10;
 		private const int pauseUserData = 20;
 		private const int eofReachedUserData = 30;
+		private const int pausedForCacheUserData = 40;
 
 		private readonly string[] possibleLibMpvPaths = new string[]
 		{
@@ -487,6 +529,7 @@ namespace Mpv.NET.Player
 
 			mpv.ObserveProperty("pause", MpvFormat.String, pauseUserData);
 			mpv.ObserveProperty("eof-reached", MpvFormat.String, eofReachedUserData);
+			mpv.ObserveProperty("paused-for-cache", MpvFormat.String, pausedForCacheUserData);
 		}
 
 		private void SetMpvHost(IntPtr hwnd)
@@ -866,18 +909,29 @@ namespace Mpv.NET.Player
 					InvokePositionChanged(newPosition);
 					break;
 				case pauseUserData:
-					var paused = eventProperty.DataString;
+					var pausedYesNoString = eventProperty.DataString;
+					var paused = MpvPlayerHelper.YesNoToBool(pausedYesNoString);
 
-					if (paused == "yes")
+					if (paused)
 						MediaPaused?.Invoke(this, EventArgs.Empty);
 					else
 						MediaResumed?.Invoke(this, EventArgs.Empty);
 					break;
 				case eofReachedUserData:
-					var eofReached = eventProperty.DataString;
+					var eofReachedYesNoString = eventProperty.DataString;
+					var eofReached = MpvPlayerHelper.YesNoToBool(eofReachedYesNoString);
 
-					if (eofReached == "yes")
+					if (eofReached)
 						MediaFinished?.Invoke(this, EventArgs.Empty);
+					break;
+				case pausedForCacheUserData:
+					var pausedForCacheYesNoString = eventProperty.DataString;
+
+					var pausedForCache = MpvPlayerHelper.YesNoToBool(pausedForCacheYesNoString);
+					if (pausedForCache)
+						MediaStartedBuffering?.Invoke(this, EventArgs.Empty);
+					else
+						MediaEndedBuffering?.Invoke(this, EventArgs.Empty);
 					break;
 			}
 		}
