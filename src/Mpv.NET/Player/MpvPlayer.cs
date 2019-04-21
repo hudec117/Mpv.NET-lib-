@@ -11,7 +11,7 @@ namespace Mpv.NET.Player
 	/// <summary>
 	/// User control containing an mpv player.
 	/// </summary>
-	public partial class MpvPlayer : IDisposable
+	public partial class MpvPlayer : IMpvPlayer, IDisposable
 	{
 		/// <summary>
 		/// An instance of the underlying mpv API. Do not touch unless you know what you're doing.
@@ -796,7 +796,7 @@ namespace Mpv.NET.Player
 				return;
 
 			var foundPath = possibleYtdlHookPaths.FirstOrDefault(File.Exists);
-			if (foundPath != default(string))
+			if (foundPath != default)
 				EnableYouTubeDl(foundPath);
 			else
 				throw new FileNotFoundException("Cannot find ytdl hook script.");
