@@ -18,7 +18,7 @@ namespace Mpv.NET.API
 			get
 			{
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default(string);
+					return default;
 
 				if (Format != MpvFormat.String)
 					throw new MpvAPIException("Data is not a string.");
@@ -34,7 +34,7 @@ namespace Mpv.NET.API
 			get
 			{
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default(long);
+					return default;
 
 				if (Format != MpvFormat.Int64)
 					throw new MpvAPIException("Data is not a long.");
@@ -48,7 +48,7 @@ namespace Mpv.NET.API
 			get
 			{
 				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default(double);
+					return default;
 
 				if (Format != MpvFormat.Double)
 					throw new MpvAPIException("Data is not a double.");

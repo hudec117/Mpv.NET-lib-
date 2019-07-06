@@ -18,7 +18,7 @@ namespace Mpv.NET.API
 		public TData? MarshalDataToStruct<TData>() where TData : struct
 		{
 			if (Data == IntPtr.Zero)
-				return null;
+				return default;
 
 			return MpvMarshal.PtrToStructure<TData>(Data);
 		}
