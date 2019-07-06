@@ -99,5 +99,9 @@ namespace Mpv.NET.Player
 		void EnableYouTubeDl();
 
 		void EnableYouTubeDl(string ytdlHookScriptPath);
+
+		void NextFrame();
+
+		void PreviousFrame();
 	}
 }
