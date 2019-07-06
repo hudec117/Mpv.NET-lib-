@@ -1,25 +1,27 @@
-# Mpv<span />.NET
+# Mpv<span />.NET<span />.lib
 
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 
-.NET video/media player based on [mpv](https://github.com/mpv-player/mpv) along with a wrapper for the C API.
+.NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms and WPF
 
 #### Player Features
 
 * Looping
 * Auto-play
+* Frame stepping
 * Asynchronous seeking
 * Change playback speed
 * Simple setup and usage
 * Logging from mpv
 * Add separate audio track
-* Playlist - Load, Next, Previous, Move, Remove, Shuffle or Clear
+* Playlist - Load, Next, Previous, Move, Remove or Clear
 * Optional [youtube-dl](https://rg3.github.io/youtube-dl/index.html) support to play videos from [hundreds of video sites](https://rg3.github.io/youtube-dl/supportedsites.html).
     * Change the desired video quality.
 
 #### Notes:
 
+* See [here](https://github.com/stax76/mpv.net) for Mpv.NET the C# media player based on mpv.
 * Very little documentation has been written for the C API wrapper. Consult [client.h](https://github.com/mpv-player/mpv/blob/master/libmpv/client.h).
 * The entirety of the mpv C API has not yet been implemented.
 
@@ -181,7 +183,7 @@ If you are looking that start an event loop you will need to create an instance 
 var dllPath = @"lib\mpv-1.dll";
 
 // Create an instance of MpvFunctions.
-var functions = new MpvFunctions(dllPath)
+var functions = new MpvFunctions(dllPath);
 
 // Create mpv
 var handle = functions.Create();
