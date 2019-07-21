@@ -19,7 +19,7 @@ namespace Mpv.NET.Player
 					return false;
 			}
 
-			throw new ArgumentException("Invalid string value for yes/no property.");
+			throw new ArgumentException($"Invalid string value for yes/no property. Actual {yesNoString}");
 		}
 	}
 }

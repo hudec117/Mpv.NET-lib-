@@ -52,8 +52,7 @@ namespace Mpv.NET.API.Interop
 
 		public IntPtr MarshalManagedToNative(object managedObj)
 		{
-			var @string = managedObj as string;
-			if (@string == null)
+			if (!(managedObj is string @string))
 				return IntPtr.Zero;
 
 			var stringPtr = MpvMarshal.GetComPtrFromManagedUTF8String(@string);

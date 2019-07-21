@@ -414,7 +414,7 @@ namespace Mpv.NET.Player
 
 		private API.Mpv mpv;
 
-		private IntPtr hwnd;
+		private readonly IntPtr hwnd;
 
 		private EventHandler<MpvPlayerPositionChangedEventArgs> positionChanged;
 
@@ -823,6 +823,28 @@ namespace Mpv.NET.Player
 			}
 
 			isYouTubeDlEnabled = true;
+		}
+
+		/// <summary>
+		/// Move to the next frame. Does not work with audio-only.
+		/// </summary>
+		public void NextFrame()
+		{
+			lock (mpvLock)
+			{
+				mpv.Command("frame-step");
+			}
+		}
+
+		/// <summary>
+		/// Move to the previous frame. Note that this is slow since it's trying to be precise, not fast.
+		/// </summary>
+		public void PreviousFrame()
+		{
+			lock (mpvLock)
+			{
+				mpv.Command("frame-back-step");
+			}
 		}
 
 		private void MpvOnPlaybackRestart(object sender, EventArgs e)
