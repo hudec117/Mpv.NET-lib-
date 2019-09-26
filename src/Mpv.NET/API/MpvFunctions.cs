@@ -3,7 +3,7 @@ using System;
 
 namespace Mpv.NET.API
 {
-	public class MpvFunctions : IMpvFunctions/*, IDisposable*/
+	public class MpvFunctions : IMpvFunctions, IDisposable
 	{
 		public MpvClientAPIVersion ClientAPIVersion			{ get; private set; }
 		public MpvErrorString ErrorString					{ get; private set; }
@@ -44,7 +44,7 @@ namespace Mpv.NET.API
 
 		private IntPtr dllHandle;
 
-		//private bool disposed = false;
+		private bool disposed = false;
 
 		public MpvFunctions(string dllPath)
 		{
@@ -110,23 +110,22 @@ namespace Mpv.NET.API
 			return delegateValue;
 		}
 
-		//public void Dispose()
-		//{
-		//	Dispose(true);
-		//}
+		public void Dispose()
+		{
+			Dispose(true);
+		}
 
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	if (disposing)
-		//	{
-		//		if (!disposed)
-		//		{
-		//			// Note: This seems to crash the application while a video is playing. Maybe this is not required?
-		//			//WinFunctions.FreeLibrary(dllHandle);
-		//		}
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (!disposed)
+				{
+					WinFunctions.FreeLibrary(dllHandle);
+				}
 
-		//		disposed = true;
-		//	}
-		//}
+				disposed = true;
+			}
+		}
 	}
 }
