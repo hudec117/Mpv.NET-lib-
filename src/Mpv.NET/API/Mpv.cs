@@ -424,21 +424,26 @@ namespace Mpv.NET.API
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposed)
-				return;
-
-			if (disposing)
+			if (!disposed)
 			{
-				if (EventLoop is IDisposable disposableEventLoop)
+				// NOTE
+				// The order of disposal is important here. Functions.TerminateDestroy is
+				// responsible for disposing of unmanaged resources on mpv's side.
+				// Inside the Dispose method of the MpvFunctions object, Windows.FreeLibrary
+				// is used to free the resources of the loaded mpv DLL.
+				// Windows.FreeLibrary MUST COME AFTER Functions.TerminarDestroy
+
+				// The event loop calls into mpv so we can't TerminateDestrot yet!
+				if (disposing && EventLoop is IDisposable disposableEventLoop)
 					disposableEventLoop.Dispose();
 
-				if (Functions is IDisposable disposableFunctions)
+				Functions.TerminateDestroy(Handle);
+
+				if (disposing && Functions is IDisposable disposableFunctions)
 					disposableFunctions.Dispose();
+
+				disposed = true;
 			}
-
-			Functions.TerminateDestroy(Handle);
-
-			disposed = true;
 		}
 
 		~Mpv()

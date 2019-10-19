@@ -222,12 +222,18 @@ local function edl_track_joined(fragments, protocol, is_live, base)
     local offset = 1
     local parts = {}
 
-    if (protocol == "http_dash_segments") and
-        not fragments[1].duration and not is_live then
+    if (protocol == "http_dash_segments") and not is_live then
+        msg.debug("Using dash")
+        local args = ""
+
         -- assume MP4 DASH initialization segment
-        table.insert(parts,
-            "!mp4_dash,init=" .. edl_escape(join_url(base, fragments[1])))
-        offset = 2
+        if not fragments[1].duration then
+            msg.debug("Using init segment")
+            args = args .. ",init=" .. edl_escape(join_url(base, fragments[1]))
+            offset = 2
+        end
+
+        table.insert(parts, "!mp4_dash" .. args)
 
         -- Check remaining fragments for duration;
         -- if not available in all, give up.
@@ -303,6 +309,8 @@ local function add_single_video(json)
 
     -- DASH/split tracks
     elseif reqfmts then
+        local streams = {}
+
         for _, track in pairs(reqfmts) do
             local edl_track = nil
             edl_track = edl_track_joined(track.fragments,
@@ -313,13 +321,22 @@ local function add_single_video(json)
             end
             if track.vcodec and track.vcodec ~= "none" then
                 -- video track
-                streamurl = edl_track or track.url
-            elseif track.acodec and track.acodec ~= "none" and track.vcodec == "none" then
+                streams[#streams + 1] = edl_track or track.url
+            elseif track.vcodec == "none" then
                 -- audio track
-                mp.commandv("audio-add",
-                    edl_track or track.url, "auto",
-                    track.format_note or "")
+                streams[#streams + 1] = edl_track or track.url
             end
+        end
+
+        if #streams > 1 then
+            -- merge them via EDL
+            for i = 1, #streams do
+                streams[i] = "!no_clip;!no_chapters;" .. edl_escape(streams[i])
+            end
+            streamurl = "edl://" ..
+                        table.concat(streams, ";!new_stream;") .. ";"
+        else
+            streamurl = streams[1]
         end
 
     elseif not (json.url == nil) then
@@ -644,6 +661,12 @@ function run_ytdl_hook(url)
             end
 
             mp.set_property("stream-open-filename", "memory://" .. table.concat(playlist, "\n"))
+
+            -- This disables mpv's mushy playlist security code, which will
+            -- break links that will be resolved to EDL later (because EDL is
+            -- not considered "safe", and the playlist entries got tagged as
+            -- network originating due to the playlist redirection).
+            mp.set_property_native("file-local-options/load-unsafe-playlists", true)
         end
 
     else -- probably a video
