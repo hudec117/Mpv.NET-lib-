@@ -826,6 +826,18 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// Instruct mpv to load a config file.
+		/// </summary>
+		/// <param name="configFilePath">Absolute path to config file.</param>
+		public void LoadConfig(string configFilePath)
+		{
+			lock (mpvLock)
+			{
+				mpv.LoadConfigFile(configFilePath);
+			}
+		}
+
+		/// <summary>
 		/// Move to the next frame. Does not work with audio-only.
 		/// </summary>
 		public void NextFrame()
