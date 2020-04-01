@@ -41,8 +41,8 @@ To use the API wrapper (and player) you will need libmpv.
 2. Extract "mpv-1.dll" from either the "i686" (32-bit) or "x86_64" (64-bit) folder into your project.
     (A "lib" folder in your project is common practice)
 3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
-    * In Visual Studio this can be achieved so:
-        1. In your Solution Explorer click the "Show All Files" button at the top. (make sure you have the correct project selected)
+    * In Visual Studio:
+        1. In Solution Explorer click the "Show All Files" button at the top. (make sure you have the correct project selected)
         2. You should see the DLL show up, right click on it and select "Include In Project".
         3. Right click on the DLL and select "Properties", then change the value for "Copy to Output Directory" to "Copy Always".
 4. Done!
@@ -57,7 +57,7 @@ To enable youtube-dl functionality in the player you will need the youtube-dl ex
 2. Download the "ytdl_hook.lua" script from [here](https://github.com/mpv-player/mpv/blob/master/player/lua/ytdl_hook.lua).
 3. Copy both files to your "lib" folder you made for libmpv.
 4. Follow step #3 in the libmpv section but perform the steps on the "ytdl_hook.lua" script and "youtube-dl.exe" executable instead.
-5. Open "ytdl_hook.lua" and change line 13 to 
+5. Open "ytdl_hook.lua" and change line 14 to 
 `path = "lib\\youtube-dl.exe",`
 6. In your code, you will need to call the `EnableYouTubeDl` method on an instance of `MpvPlayer`.
     * If you placed your "ytdl_hook.lua" script somewhere other than the "lib" folder, you will need to pass the relative (to your apps executable) or absolute path of the script to `EnableYouTubeDl`.
