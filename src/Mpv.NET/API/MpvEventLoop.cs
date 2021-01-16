@@ -66,6 +66,11 @@ namespace Mpv.NET.API
 
 			IsRunning = false;
 
+			if (Task.CurrentId == eventLoopTask.Id)
+            {
+				return;
+            }
+
 			// Wake up WaitEvent in the event loop thread
 			// so we can stop it.
 			Functions.Wakeup(mpvHandle);
