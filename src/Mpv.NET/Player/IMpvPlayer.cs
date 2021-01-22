@@ -1,5 +1,6 @@
 ﻿using Mpv.NET.API;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Mpv.NET.Player
@@ -71,6 +72,8 @@ namespace Mpv.NET.Player
 		event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged;
 
 		void Load(string path, bool force = false);
+
+		void LoadPlaylist(IEnumerable<string> paths, bool force = false);
 
 		Task SeekAsync(double position, bool relative = false);
 
