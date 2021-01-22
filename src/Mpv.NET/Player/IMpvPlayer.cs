@@ -34,6 +34,8 @@ namespace Mpv.NET.Player
 
 		bool Loop { get; set; }
 
+		bool LoopPlaylist { get; set; }
+
 		bool EndReached { get; }
 
 		TimeSpan Duration { get; }

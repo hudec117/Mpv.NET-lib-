@@ -196,6 +196,33 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// Determines whether playlist will loop.
+		/// </summary>
+		public bool LoopPlaylist
+		{
+			get
+			{
+				string stringValue;
+
+				lock (mpvLock)
+				{
+					stringValue = mpv.GetPropertyString("loop-playlist");
+				}
+
+				return stringValue != "no";
+			}
+			set
+			{
+				var stringValue = value ? "inf" : "no";
+
+				lock (mpvLock)
+				{
+					mpv.SetPropertyString("loop-playlist", stringValue);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Indicates whether media has reached end of playback.
 		/// </summary>
 		public bool EndReached
