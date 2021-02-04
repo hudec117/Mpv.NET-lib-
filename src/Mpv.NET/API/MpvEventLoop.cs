@@ -5,111 +5,117 @@ using System.Threading.Tasks;
 
 namespace Mpv.NET.API
 {
-	public class MpvEventLoop : IMpvEventLoop, IDisposable
-	{
-		public bool IsRunning { get; private set; }
+    public class MpvEventLoop : IMpvEventLoop, IDisposable
+    {
+        public bool IsRunning { get => isRunning; private set => isRunning = value; }
 
-		public Action<MpvEvent> Callback { get; set; }
+        public Action<MpvEvent> Callback { get; set; }
 
-		public IntPtr MpvHandle
-		{
-			get => mpvHandle;
-			private set
-			{
-				if (value == IntPtr.Zero)
-					throw new ArgumentException("Mpv handle is invalid.");
+        public IntPtr MpvHandle
+        {
+            get => mpvHandle;
+            private set
+            {
+                if (value == IntPtr.Zero)
+                    throw new ArgumentException("Mpv handle is invalid.");
 
-				mpvHandle = value;
-			}
-		}
+                mpvHandle = value;
+            }
+        }
 
-		public IMpvFunctions Functions
-		{
-			get => functions;
-			set
-			{
-				Guard.AgainstNull(value);
+        public IMpvFunctions Functions
+        {
+            get => functions;
+            set
+            {
+                Guard.AgainstNull(value);
 
-				functions = value;
-			}
-		}
+                functions = value;
+            }
+        }
 
-		private IntPtr mpvHandle;
-		private IMpvFunctions functions;
+        private IntPtr mpvHandle;
+        private IMpvFunctions functions;
 
-		private Task eventLoopTask;
+        private Task eventLoopTask;
 
-		private bool disposed = false;
+        private bool disposed = false;
+        private volatile bool isRunning;
 
-		public MpvEventLoop(Action<MpvEvent> callback, IntPtr mpvHandle, IMpvFunctions functions)
-		{
-			Callback = callback;
-			MpvHandle = mpvHandle;
-			Functions = functions;
-		}
+        public MpvEventLoop(Action<MpvEvent> callback, IntPtr mpvHandle, IMpvFunctions functions)
+        {
+            Callback = callback;
+            MpvHandle = mpvHandle;
+            Functions = functions;
+        }
 
-		public void Start()
-		{
-			Guard.AgainstDisposed(disposed, nameof(MpvEventLoop));
+        public void Start()
+        {
+            Guard.AgainstDisposed(disposed, nameof(MpvEventLoop));
 
-			DisposeEventLoopTask();
+            DisposeEventLoopTask();
 
-			IsRunning = true;
+            IsRunning = true;
 
-			eventLoopTask = new Task(EventLoopTaskHandler);
-			eventLoopTask.Start();
-		}
+            eventLoopTask = new Task(EventLoopTaskHandler);
+            eventLoopTask.Start();
+        }
 
-		public void Stop()
-		{
-			Guard.AgainstDisposed(disposed, nameof(MpvEventLoop));
+        public void Stop()
+        {
+            Guard.AgainstDisposed(disposed, nameof(MpvEventLoop));
 
-			IsRunning = false;
+            IsRunning = false;
 
-			// Wake up WaitEvent in the event loop thread
-			// so we can stop it.
-			Functions.Wakeup(mpvHandle);
-			
-			eventLoopTask.Wait();
-		}
+            if (Task.CurrentId == eventLoopTask.Id)
+            {
+                return;
+            }
 
-		private void EventLoopTaskHandler()
-		{
-			while (IsRunning)
-			{
-				var eventPtr = Functions.WaitEvent(mpvHandle, Timeout.Infinite);
-				if (eventPtr != IntPtr.Zero)
-				{
-					var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
-					if (@event.ID != MpvEventID.None)
-						Callback?.Invoke(@event);
-				}
-			}
-		}
+            // Wake up WaitEvent in the event loop thread
+            // so we can stop it.
+            Functions.Wakeup(mpvHandle);
 
-		private void DisposeEventLoopTask()
-		{
-			eventLoopTask?.Dispose();
-		}
+            eventLoopTask.Wait();
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-		}
+        private void EventLoopTaskHandler()
+        {
+            while (IsRunning)
+            {
+                var eventPtr = Functions.WaitEvent(mpvHandle, Timeout.Infinite);
+                if (eventPtr != IntPtr.Zero)
+                {
+                    var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
+                    if (@event.ID != MpvEventID.None)
+                        Callback?.Invoke(@event);
+                }
+            }
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (!disposed)
-				{
-					Stop();
+        private void DisposeEventLoopTask()
+        {
+            eventLoopTask?.Dispose();
+        }
 
-					DisposeEventLoopTask();
-				}
+        public void Dispose()
+        {
+            Dispose(true);
+        }
 
-				disposed = true;
-			}
-		}
-	}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!disposed)
+                {
+                    Stop();
+
+                    DisposeEventLoopTask();
+                }
+
+                disposed = true;
+            }
+        }
+    }
 }
