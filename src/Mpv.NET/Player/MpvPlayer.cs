@@ -1,5 +1,6 @@
 ﻿using Mpv.NET.API;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -191,6 +192,33 @@ namespace Mpv.NET.Player
 				lock (mpvLock)
 				{
 					mpv.SetPropertyString("loop", stringValue);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Determines whether playlist will loop.
+		/// </summary>
+		public bool LoopPlaylist
+		{
+			get
+			{
+				string stringValue;
+
+				lock (mpvLock)
+				{
+					stringValue = mpv.GetPropertyString("loop-playlist");
+				}
+
+				return stringValue != "no";
+			}
+			set
+			{
+				var stringValue = value ? "inf" : "no";
+
+				lock (mpvLock)
+				{
+					mpv.SetPropertyString("loop-playlist", stringValue);
 				}
 			}
 		}
@@ -563,6 +591,39 @@ namespace Mpv.NET.Player
 
 				var loadMethodString = LoadMethodHelper.ToString(loadMethod);
 				mpv.Command("loadfile", path, loadMethodString);
+			}
+		}
+
+		/// <summary>
+		/// Loads a collection of file paths as a playlist into mpv. If called while media is playing,
+		/// the specified media collection will be appended to the playlist. If youtube-dl is enabled,
+		/// this method can be used to load videos from video sites.
+		/// </summary>
+		/// <param name="paths">Paths or URLs to media sources</param>
+		/// <param name="force">If true, will force load the media replacing any currently playing media.</param>
+		public void LoadPlaylist(IEnumerable<string> paths, bool force = false)
+		{
+			Guard.AgainstNull(paths);
+
+			lock (mpvLock)
+			{
+				mpv.SetPropertyString("pause", AutoPlay ? "no" : "yes");
+
+				bool first = true;
+
+				foreach (string path in paths)
+				{
+					var loadMethod = LoadMethod.Append;
+
+					if (first && (!force || !IsPlaying))
+						loadMethod = LoadMethod.Replace;
+
+					var loadMethodString = LoadMethodHelper.ToString(loadMethod);
+
+					mpv.Command("loadfile", path, loadMethodString);
+
+					first = false;
+				}
 			}
 		}
 
