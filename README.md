@@ -37,8 +37,9 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 To use the API wrapper (and player) you will need libmpv.
 
-1. Download libmpv from [here](https://mpv.srsfckn.biz/). (latest "Dev" build)
-2. Extract "mpv-1.dll" from either the "i686" (32-bit) or "x86_64" (64-bit) folder into your project.
+1. Download libmpv from [here](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/).
+   * Either "i686" if your app is 32-bit or "x86_64" if your app is 64-bit
+2. Extract "mpv-1.dll" from the archive into your project.
     (A "lib" folder in your project is common practice)
 3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
     * In Visual Studio:
@@ -57,13 +58,21 @@ To enable youtube-dl functionality in the player you will need the youtube-dl ex
 2. Download the "ytdl_hook.lua" script from [here](https://github.com/mpv-player/mpv/blob/master/player/lua/ytdl_hook.lua).
 3. Copy both files to your "lib" folder you made for libmpv.
 4. Follow step #3 in the libmpv section but perform the steps on the "ytdl_hook.lua" script and "youtube-dl.exe" executable instead.
-5. Open "ytdl_hook.lua" and change line 14 to 
-`path = "lib\\youtube-dl.exe",`
+5. Near the start of the file, change the declaration of "ytdl" so it looks like this:
+```lua
+local ytdl = {
+    path = "lib\\youtube-dl.exe",
+    searched = false,
+    blacklisted = {}
+}
+```
 6. In your code, you will need to call the `EnableYouTubeDl` method on an instance of `MpvPlayer`.
     * If you placed your "ytdl_hook.lua" script somewhere other than the "lib" folder, you will need to pass the relative (to your apps executable) or absolute path of the script to `EnableYouTubeDl`.
 7. Done!
 
-If youtube-dl stops working after working fine, first try updating the executable with the latest version.
+To keep youtube-dl functionality working:
+* Regularly update the "youtube-dl.exe" executable with latest version.
+* Regularly update the "ytdl_hook.lua" script with the latest version.
 
 If you have any doubts or questions regarding this process, please feel free to open an issue.
 
