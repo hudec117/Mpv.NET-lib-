@@ -140,7 +140,6 @@ namespace Mpv.NET.API
 
 		private void HandleShutdown()
 		{
-			functions.TerminateDestroy(Handle);
 			eventLoop.Stop();
 			Shutdown?.Invoke(this, EventArgs.Empty);
 		}

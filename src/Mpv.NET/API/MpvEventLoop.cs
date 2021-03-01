@@ -7,7 +7,7 @@ namespace Mpv.NET.API
 {
 	public class MpvEventLoop : IMpvEventLoop, IDisposable
 	{
-		public bool IsRunning { get; private set; }
+		public bool IsRunning { get => isRunning; private set => isRunning = value; }
 
 		public Action<MpvEvent> Callback { get; set; }
 
@@ -40,6 +40,7 @@ namespace Mpv.NET.API
 		private Task eventLoopTask;
 
 		private bool disposed = false;
+		private volatile bool isRunning;
 
 		public MpvEventLoop(Action<MpvEvent> callback, IntPtr mpvHandle, IMpvFunctions functions)
 		{
@@ -66,10 +67,15 @@ namespace Mpv.NET.API
 
 			IsRunning = false;
 
+			if (Task.CurrentId == eventLoopTask.Id)
+			{
+				return;
+			}
+
 			// Wake up WaitEvent in the event loop thread
 			// so we can stop it.
 			Functions.Wakeup(mpvHandle);
-			
+
 			eventLoopTask.Wait();
 		}
 
