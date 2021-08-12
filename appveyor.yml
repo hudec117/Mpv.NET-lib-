@@ -20,16 +20,25 @@ dotnet_csproj:
   file_version: '{version}'
   informational_version: '{version}'
 before_build:
-- cmd: nuget restore src\Mpv.NET\Mpv.NET.csproj
+- cmd: >-
+  cd src\Mpv.NET
+  nuget restore
+  cd ..
+  cd ..
 build:
   project: src/Mpv.NET/Mpv.NET.csproj
   parallel: true
   verbosity: normal
 before_package:
 - cmd: >-
-    nuget spec src\Mpv.NET\Mpv.NET.csproj
+    cd src\Mpv.NET
 
-    dotnet pack src\Mpv.NET\Mpv.NET.csproj
+    nuget spec
+
+    dotnet pack
+
+    cd ..
+    cd ..
 artifacts:
 - path: '**\*.nupkg'
   name: NuGet Package
