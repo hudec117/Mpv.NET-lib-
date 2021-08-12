@@ -21,10 +21,10 @@ dotnet_csproj:
   informational_version: '{version}'
 before_build:
 - cmd: >-
-  cd src\Mpv.NET
-  nuget restore
-  cd ..
-  cd ..
+    cd src\Mpv.NET
+    nuget restore
+    cd ..
+    cd ..
 build:
   project: src/Mpv.NET/Mpv.NET.csproj
   parallel: true
