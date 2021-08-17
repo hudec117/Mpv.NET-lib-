@@ -49,6 +49,8 @@ namespace Mpv.NET.Player
 
 		double Speed { get; set; }
 
+		IReadOnlyList<string> CurrentPlaylist { get; }
+
 		event EventHandler MediaResumed;
 
 		event EventHandler MediaPaused;

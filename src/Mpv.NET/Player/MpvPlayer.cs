@@ -366,6 +366,12 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// List of file paths representing the currently loaded playlist, ordered by their 0-based indexes
+		/// </summary>
+		/// <exception cref="NotImplementedException">Will be thrown due to not being implemented yet</exception>
+		public IReadOnlyList<string> CurrentPlaylist => throw new NotImplementedException();
+
+		/// <summary>
 		/// Invoked when media is resumed.
 		/// </summary>
 		public event EventHandler MediaResumed;
