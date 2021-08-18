@@ -57,7 +57,7 @@ namespace Mpv.NET.API
 		{
 			Guard.AgainstNullOrEmptyOrWhiteSpaceString(dllPath, nameof(dllPath));
 
-			dllHandle = WinFunctions.LoadLibrary(dllPath);
+			dllHandle = PlatformDllLoadUtils.Get.LoadLibrary(dllPath);
 			if (dllHandle == IntPtr.Zero)
 				throw new MpvAPIException("Failed to load Mpv DLL. .NET apps by default are 32-bit so make sure you're loading the 32-bit DLL.");
 		}
@@ -121,7 +121,7 @@ namespace Mpv.NET.API
 			{
 				if (!disposed)
 				{
-					WinFunctions.FreeLibrary(dllHandle);
+					PlatformDllLoadUtils.Get.FreeLibrary(dllHandle);
 				}
 
 				disposed = true;
