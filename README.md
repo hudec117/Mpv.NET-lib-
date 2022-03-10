@@ -3,6 +3,12 @@
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 
+>Hello everyone!
+
+>I developed this library a few years ago for another project of mine. Ever since I completed that project I have not been able to maintain this repository and investigate the issues. I know that a lot of you find this library useful and I want it to continue but I am not able to dedicate time towards it any more.
+
+>If anyone is interested in maintaining this repository, reviewing pull requests and investigating issues. I would be more than happy to give you the right permissions to do that. I will also happily publish new version of the package on Nuget to make sure everyone can continue to enjoy the updates.
+
 .NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms and WPF
 
 #### Player Features
