@@ -366,6 +366,20 @@ namespace Mpv.NET.Player
 		}
 
 		/// <summary>
+		/// List of file names representing the currently loaded playlist, ordered by their 0-based indexes
+		/// </summary>
+		public IReadOnlyList<string> CurrentPlaylist
+		{
+			get
+			{
+				lock (mpvLock)
+				{
+					return Enumerable.Range(0, PlaylistEntryCount).Select(i => mpv.GetPropertyString($"playlist/{i}/filename")).ToArray();
+				}
+			}
+		}
+
+		/// <summary>
 		/// Invoked when media is resumed.
 		/// </summary>
 		public event EventHandler MediaResumed;

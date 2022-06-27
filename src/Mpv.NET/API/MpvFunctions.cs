@@ -70,7 +70,7 @@ namespace Mpv.NET.API
 			ClientName				= LoadFunction<MpvClientName>("mpv_client_name");
 			Create					= LoadFunction<MpvCreate>("mpv_create");
 			Initialise				= LoadFunction<MpvInitialise>("mpv_initialize");
-			DetachDestroy			= LoadFunction<MpvDetachDestroy>("mpv_detach_destroy");
+			DetachDestroy			= LoadFunction<MpvDetachDestroy>("mpv_destroy");
 			TerminateDestroy		= LoadFunction<MpvTerminateDestroy>("mpv_terminate_destroy");
 			CreateClient			= LoadFunction<MpvCreateClient>("mpv_create_client");
 			LoadConfigFile			= LoadFunction<MpvLoadConfigFile>("mpv_load_config_file");
