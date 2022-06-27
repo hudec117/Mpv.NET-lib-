@@ -2,15 +2,15 @@
 
 namespace Mpv.NET.API
 {
-	public interface IMpvEventLoop
-	{
-		bool IsRunning { get; }
+    public interface IMpvEventLoop
+    {
+        bool IsRunning { get; }
 
-		Action<MpvEvent> Callback { get; set; }
+        Action<MpvEvent> Callback { get; set; }
 
-		IMpvFunctions Functions { get; set; }
+        IMpvFunctions Functions { get; set; }
 
-		void Start();
-		void Stop();
-	}
+        void Start();
+        void Stop();
+    }
 }

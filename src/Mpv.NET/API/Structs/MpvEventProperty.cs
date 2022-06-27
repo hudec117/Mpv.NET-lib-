@@ -4,60 +4,60 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET.API
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct MpvEventProperty
-	{
-		public string Name;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MpvEventProperty
+    {
+        public string Name;
 
-		public MpvFormat Format;
+        public MpvFormat Format;
 
-		public IntPtr Data;
+        public IntPtr Data;
 
-		public string DataString
-		{
-			get
-			{
-				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default;
+        public string DataString
+        {
+            get
+            {
+                if (Format == MpvFormat.None || Data == IntPtr.Zero)
+                    return default;
 
-				if (Format != MpvFormat.String)
-					throw new MpvAPIException("Data is not a string.");
+                if (Format != MpvFormat.String)
+                    throw new MpvAPIException("Data is not a string.");
 
-				var innerPtr = Marshal.ReadIntPtr(Data);
+                var innerPtr = Marshal.ReadIntPtr(Data);
 
-				return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
-			}
-		}
+                return MpvMarshal.GetManagedUTF8StringFromPtr(innerPtr);
+            }
+        }
 
-		public long DataLong
-		{
-			get
-			{
-				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default;
+        public long DataLong
+        {
+            get
+            {
+                if (Format == MpvFormat.None || Data == IntPtr.Zero)
+                    return default;
 
-				if (Format != MpvFormat.Int64)
-					throw new MpvAPIException("Data is not a long.");
+                if (Format != MpvFormat.Int64)
+                    throw new MpvAPIException("Data is not a long.");
 
-				return Marshal.ReadInt64(Data);
-			}
-		}
+                return Marshal.ReadInt64(Data);
+            }
+        }
 
-		public double DataDouble
-		{
-			get
-			{
-				if (Format == MpvFormat.None || Data == IntPtr.Zero)
-					return default;
+        public double DataDouble
+        {
+            get
+            {
+                if (Format == MpvFormat.None || Data == IntPtr.Zero)
+                    return default;
 
-				if (Format != MpvFormat.Double)
-					throw new MpvAPIException("Data is not a double.");
+                if (Format != MpvFormat.Double)
+                    throw new MpvAPIException("Data is not a double.");
 
-				var doubleBytes = new byte[sizeof(double)];
-				Marshal.Copy(Data, doubleBytes, 0, sizeof(double));
+                var doubleBytes = new byte[sizeof(double)];
+                Marshal.Copy(Data, doubleBytes, 0, sizeof(double));
 
-				return BitConverter.ToDouble(doubleBytes, 0);
-			}
-		}
-	}
+                return BitConverter.ToDouble(doubleBytes, 0);
+            }
+        }
+    }
 }
