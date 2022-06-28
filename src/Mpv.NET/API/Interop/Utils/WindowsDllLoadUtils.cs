@@ -3,26 +3,33 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET.API.Interop
 {
-    class WindowsDllLoadUtils : IDllLoadUtils {
-        void IDllLoadUtils.FreeLibrary(IntPtr handle) {
-            FreeLibrary(handle);
-        }
+    public class WindowsDllLoadUtils : IDllLoadUtils
+    {
+        // https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-loadlibrarya
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
+        public static extern IntPtr LoadLibrary(string lpFileName);
 
-        IntPtr IDllLoadUtils.GetProcAddress(IntPtr dllHandle, string name) {
-            return GetProcAddress(dllHandle, name);
-        }
+        // https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-freelibrary
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
+        public static extern int FreeLibrary(IntPtr hModule);
 
-        IntPtr IDllLoadUtils.LoadLibrary(string fileName) {
+        // https://docs.microsoft.com/en-us/windows/desktop/api/libloaderapi/nf-libloaderapi-getprocaddress
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi, BestFitMapping = false)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string lProcName);
+
+        IntPtr IDllLoadUtils.LoadLibrary(string fileName)
+        {
             return LoadLibrary(fileName);
         }
 
-        [DllImport("kernel32")]
-        private static extern IntPtr LoadLibrary(string fileName);
+        void IDllLoadUtils.FreeLibrary(IntPtr handle)
+        {
+            FreeLibrary(handle);
+        }
 
-        [DllImport("kernel32.dll")]
-        private static extern int FreeLibrary(IntPtr handle);
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetProcAddress (IntPtr handle, string procedureName);
+        IntPtr IDllLoadUtils.GetProcAddress(IntPtr dllHandle, string name)
+        {
+            return GetProcAddress(dllHandle, name);
+        }
     }
 }

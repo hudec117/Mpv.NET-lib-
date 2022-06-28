@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -8,7 +7,7 @@ using Mpv.NET.Player;
 
 namespace Mpv.NET.Avalonia
 {
-     /// <summary>
+    /// <summary>
     /// Avalonia VideoView for Windows, Linux and Mac.
     /// </summary>
     public class VideoView : NativeControlHost
@@ -47,32 +46,23 @@ namespace Mpv.NET.Avalonia
                 Attach();
             }
         }
-        
-        
 
         private void Attach()
         {
-            if(_mediaPlayer != null || _platformHandle == null || !IsInitialized)
+            if (_mediaPlayer != null || _platformHandle == null || !IsInitialized)
                 return;
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 _mediaPlayer = new MpvPlayer(_platformHandle.Handle);
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                _mediaPlayer = new MpvPlayer(_platformHandle.Handle,"libmpv.so");
-            }
-            // else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            // {
-            //     _mediaPlayer.NsObject = _platformHandle.Handle;
-            // }
+                _mediaPlayer = new MpvPlayer(_platformHandle.Handle, "libmpv.so");
         }
 
         private void Detach()
         {
             if (_mediaPlayer == null)
                 return;
-            
+
             _mediaPlayer.Dispose();
         }
 
@@ -97,9 +87,7 @@ namespace Mpv.NET.Avalonia
             base.DestroyNativeControlCore(control);
 
             if (_platformHandle != null)
-            {
                 _platformHandle = null;
-            }
         }
     }
 }
