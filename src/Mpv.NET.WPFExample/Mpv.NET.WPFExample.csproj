@@ -93,7 +93,7 @@
     <Content Include="lib\mpv-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="lib\youtube-dl.exe">
+    <Content Include="lib\yt-dlp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

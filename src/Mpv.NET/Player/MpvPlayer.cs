@@ -583,7 +583,7 @@ namespace Mpv.NET.Player
         /// <summary>
         /// Loads the file at the path into mpv. If called while media is playing, the specified media
         /// will be appended to the playlist.
-        /// If youtube-dl is enabled, this method can be used to load videos from video sites.
+        /// If yt-dlp is enabled, this method can be used to load videos from video sites.
         /// </summary>
         /// <param name="path">Path or URL to media source.</param>
         /// <param name="force">If true, will force load the media replacing any currently playing media.</param>
@@ -610,7 +610,7 @@ namespace Mpv.NET.Player
 
         /// <summary>
         /// Loads a collection of file paths as a playlist into mpv. If called while media is playing,
-        /// the specified media collection will be appended to the playlist. If youtube-dl is enabled,
+        /// the specified media collection will be appended to the playlist. If yt-dlp is enabled,
         /// this method can be used to load videos from video sites.
         /// </summary>
         /// <param name="paths">Paths or URLs to media sources</param>
@@ -858,7 +858,7 @@ namespace Mpv.NET.Player
         }
 
         /// <summary>
-        /// Enable youtube-dl functionality in mpv. This methods attempts to load the ytdl hook script from:
+        /// Enable yt-dlp functionality in mpv. This methods attempts to load the ytdl hook script from:
         /// "ytdl_hook.lua",
         /// "ytdl.lua",
         /// "lib\ytdl_hook.lua" and
