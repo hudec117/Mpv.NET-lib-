@@ -5,16 +5,16 @@ namespace Mpv.NET.API.Interop
 {
     public class LinuxDllLoadUtils : IDllLoadUtils
     {
-        [DllImport("libdl")]
+        [DllImport("libc")]
         private static extern IntPtr dlopen(string fileName, int flags);
 
-        [DllImport("libdl")]
+        [DllImport("libc")]
         private static extern IntPtr dlsym(IntPtr handle, string symbol);
 
-        [DllImport("libdl")]
+        [DllImport("libc")]
         private static extern int dlclose(IntPtr handle);
 
-        [DllImport("libdl")]
+        [DllImport("libc")]
         private static extern IntPtr dlerror();
 
         private const int RTLD_NOW = 2;
