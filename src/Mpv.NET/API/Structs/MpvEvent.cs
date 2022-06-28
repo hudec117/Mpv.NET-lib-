@@ -4,23 +4,23 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET.API
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct MpvEvent
-	{
-		public MpvEventID ID;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MpvEvent
+    {
+        public MpvEventID ID;
 
-		public MpvError Error;
+        public MpvError Error;
 
-		public ulong ReplyUserData;
+        public ulong ReplyUserData;
 
-		public IntPtr Data;
+        public IntPtr Data;
 
-		public TData? MarshalDataToStruct<TData>() where TData : struct
-		{
-			if (Data == IntPtr.Zero)
-				return default;
+        public TData? MarshalDataToStruct<TData>() where TData : struct
+        {
+            if (Data == IntPtr.Zero)
+                return default;
 
-			return MpvMarshal.PtrToStructure<TData>(Data);
-		}
-	}
+            return MpvMarshal.PtrToStructure<TData>(Data);
+        }
+    }
 }

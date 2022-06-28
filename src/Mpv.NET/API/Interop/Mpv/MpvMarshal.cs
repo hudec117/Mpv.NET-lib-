@@ -5,102 +5,102 @@ using System.Text;
 
 namespace Mpv.NET.API.Interop
 {
-	public static class MpvMarshal
-	{
-		public static IntPtr GetComPtrFromManagedUTF8String(string @string)
-		{
-			Guard.AgainstNull(@string, nameof(@string));
+    public static class MpvMarshal
+    {
+        public static IntPtr GetComPtrFromManagedUTF8String(string @string)
+        {
+            Guard.AgainstNull(@string, nameof(@string));
 
-			@string += '\0';
+            @string += '\0';
 
-			var stringBytes = Encoding.UTF8.GetBytes(@string);
-			var stringBytesCount = stringBytes.Length;
+            var stringBytes = Encoding.UTF8.GetBytes(@string);
+            var stringBytesCount = stringBytes.Length;
 
-			var stringPtr = Marshal.AllocCoTaskMem(stringBytesCount);
-			Marshal.Copy(stringBytes, 0, stringPtr, stringBytesCount);
+            var stringPtr = Marshal.AllocCoTaskMem(stringBytesCount);
+            Marshal.Copy(stringBytes, 0, stringPtr, stringBytesCount);
 
-			return stringPtr;
-		}
+            return stringPtr;
+        }
 
-		public static string GetManagedUTF8StringFromPtr(IntPtr stringPtr)
-		{
-			if (stringPtr == IntPtr.Zero)
-				throw new ArgumentException("Cannot get string from invalid pointer.");
+        public static string GetManagedUTF8StringFromPtr(IntPtr stringPtr)
+        {
+            if (stringPtr == IntPtr.Zero)
+                throw new ArgumentException("Cannot get string from invalid pointer.");
 
-			var stringBytes = new List<byte>();
-			var offset = 0;
-			
-			// Just to be safe!
-			while (offset < short.MaxValue)
-			{
-				var @byte = Marshal.ReadByte(stringPtr, offset);
-				if (@byte == '\0')
-					break;
+            var stringBytes = new List<byte>();
+            var offset = 0;
 
-				stringBytes.Add(@byte);
+            // Just to be safe!
+            while (offset < short.MaxValue)
+            {
+                var @byte = Marshal.ReadByte(stringPtr, offset);
+                if (@byte == '\0')
+                    break;
 
-				offset++;
-			}
+                stringBytes.Add(@byte);
 
-			var stringBytesArray = stringBytes.ToArray();
+                offset++;
+            }
 
-			return Encoding.UTF8.GetString(stringBytesArray);
-		}
+            var stringBytesArray = stringBytes.ToArray();
 
-		public static IntPtr GetComPtrForManagedUTF8StringArray(string[] inArray, out IntPtr[] outArray)
-		{
-			Guard.AgainstNull(inArray, nameof(inArray));
+            return Encoding.UTF8.GetString(stringBytesArray);
+        }
 
-			var numberOfStrings = inArray.Length + 1;
+        public static IntPtr GetComPtrForManagedUTF8StringArray(string[] inArray, out IntPtr[] outArray)
+        {
+            Guard.AgainstNull(inArray, nameof(inArray));
 
-			outArray = new IntPtr[numberOfStrings];
+            var numberOfStrings = inArray.Length + 1;
 
-			// Allocate COM memory since this array will be passed to
-			// a C function. This allocates space for the pointers that will point
-			// to each string.
-			var rootPointer = Marshal.AllocCoTaskMem(IntPtr.Size * numberOfStrings);
+            outArray = new IntPtr[numberOfStrings];
 
-			for (var index = 0; index < inArray.Length; index++)
-			{
-				var currentString = inArray[index];
-				var currentStringPtr = GetComPtrFromManagedUTF8String(currentString);
+            // Allocate COM memory since this array will be passed to
+            // a C function. This allocates space for the pointers that will point
+            // to each string.
+            var rootPointer = Marshal.AllocCoTaskMem(IntPtr.Size * numberOfStrings);
 
-				outArray[index] = currentStringPtr;
-			}
+            for (var index = 0; index < inArray.Length; index++)
+            {
+                var currentString = inArray[index];
+                var currentStringPtr = GetComPtrFromManagedUTF8String(currentString);
 
-			Marshal.Copy(outArray, 0, rootPointer, numberOfStrings);
+                outArray[index] = currentStringPtr;
+            }
 
-			return rootPointer;
-		}
+            Marshal.Copy(outArray, 0, rootPointer, numberOfStrings);
 
-		public static void FreeComPtrArray(IntPtr[] ptrArray)
-		{
-			Guard.AgainstNull(ptrArray, nameof(ptrArray));
+            return rootPointer;
+        }
 
-			foreach (var intPtr in ptrArray)
-				Marshal.FreeCoTaskMem(intPtr);
-		}
+        public static void FreeComPtrArray(IntPtr[] ptrArray)
+        {
+            Guard.AgainstNull(ptrArray, nameof(ptrArray));
 
-		public static TStruct PtrToStructure<TStruct>(IntPtr ptr) where TStruct : struct
-		{
-			if (ptr == IntPtr.Zero)
-				throw new ArgumentException("Invalid pointer.");
+            foreach (var intPtr in ptrArray)
+                Marshal.FreeCoTaskMem(intPtr);
+        }
 
-			return (TStruct)Marshal.PtrToStructure(ptr, typeof(TStruct));
-		}
+        public static TStruct PtrToStructure<TStruct>(IntPtr ptr) where TStruct : struct
+        {
+            if (ptr == IntPtr.Zero)
+                throw new ArgumentException("Invalid pointer.");
 
-		public static TDelegate LoadUnmanagedFunction<TDelegate>(IntPtr dllHandle, string functionName) where TDelegate : class
-		{
-			if (dllHandle == IntPtr.Zero)
-				throw new ArgumentException("DLL handle is invalid.", nameof(dllHandle));
+            return (TStruct)Marshal.PtrToStructure(ptr, typeof(TStruct));
+        }
 
-			Guard.AgainstNullOrEmptyOrWhiteSpaceString(functionName, nameof(functionName));
+        public static TDelegate LoadUnmanagedFunction<TDelegate>(IntPtr dllHandle, string functionName) where TDelegate : class
+        {
+            if (dllHandle == IntPtr.Zero)
+                throw new ArgumentException("DLL handle is invalid.", nameof(dllHandle));
 
-			var functionPtr = PlatformDllLoadUtils.Get.GetProcAddress(dllHandle, functionName);
-			if (functionPtr == IntPtr.Zero)
-				return null;
+            Guard.AgainstNullOrEmptyOrWhiteSpaceString(functionName, nameof(functionName));
 
-			return (TDelegate)(object)Marshal.GetDelegateForFunctionPointer(functionPtr, typeof(TDelegate));
-		}
-	}
+            var functionPtr = PlatformDllLoadUtils.GetProcAddress(dllHandle, functionName);
+            if (functionPtr == IntPtr.Zero)
+                return null;
+
+            return (TDelegate)(object)Marshal.GetDelegateForFunctionPointer(functionPtr, typeof(TDelegate));
+        }
+    }
 }
