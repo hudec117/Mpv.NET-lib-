@@ -241,6 +241,15 @@ namespace Mpv.NET.API
             }
         }
 
+        public void AbortAsyncCommand(ulong replyUserData)
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+
+            var error = Functions.AbortAsyncCommand(Handle, replyUserData);
+            if (error != MpvError.Success)
+                throw MpvAPIException.FromError(error, Functions);
+        }
+
         public void SetProperty(string name, byte[] data, MpvFormat format = MpvFormat.ByteArray)
         {
             Guard.AgainstDisposed(disposed, nameof(Mpv));
@@ -412,6 +421,25 @@ namespace Mpv.NET.API
             var stringLogLevel = MpvLogLevelHelper.GetStringForLogLevel(logLevel);
 
             var error = Functions.RequestLogMessages(Handle, stringLogLevel);
+            if (error != MpvError.Success)
+                throw MpvAPIException.FromError(error, Functions);
+        }
+
+        public void HookAdd(string name, ulong replyUserData, int priority)
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+            Guard.AgainstNullOrEmptyOrWhiteSpaceString(name, nameof(name));
+
+            var error = Functions.HookAdd(Handle, replyUserData, name, priority);
+            if (error != MpvError.Success)
+                throw MpvAPIException.FromError(error, Functions);
+        }
+
+        public void HookContinue(ulong id)
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+
+            var error = Functions.HookContinue(Handle, id);
             if (error != MpvError.Success)
                 throw MpvAPIException.FromError(error, Functions);
         }

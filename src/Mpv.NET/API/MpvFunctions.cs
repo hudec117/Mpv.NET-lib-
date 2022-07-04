@@ -20,6 +20,7 @@ namespace Mpv.NET.API
         public MpvSetOptionString SetOptionString { get; private set; }
         public MpvCommand Command { get; private set; }
         public MpvCommandAsync CommandAsync { get; private set; }
+        public MpvAbortAsyncCommand AbortAsyncCommand { get; private set; }
         public MpvSetProperty SetProperty { get; private set; }
         public MpvSetPropertyString SetPropertyString { get; private set; }
         public MpvSetPropertyAsync SetPropertyAsync { get; private set; }
@@ -35,8 +36,9 @@ namespace Mpv.NET.API
         public MpvWaitEvent WaitEvent { get; private set; }
         public MpvWakeup Wakeup { get; private set; }
         public MpvSetWakeupCallback SetWakeupCallback { get; private set; }
-        public MpvGetWakeupPipe GetWakeupPipe { get; private set; }
         public MpvWaitAsyncRequests WaitAsyncRequests { get; private set; }
+        public MpvHookAdd HookAdd { get; private set; }
+        public MpvHookContinue HookContinue { get; private set; }
 
         // Not strictly part of the C API but are used to invoke mpv_get_property with value data type.
         public MpvGetPropertyDouble GetPropertyDouble { get; private set; }
@@ -57,10 +59,10 @@ namespace Mpv.NET.API
         {
             Guard.AgainstNullOrEmptyOrWhiteSpaceString(dllPath, nameof(dllPath));
 
-			      dllHandle = PlatformDll.Utils.LoadLibrary(dllPath);
-			      if (dllHandle == IntPtr.Zero)
-				        throw new MpvAPIException("Failed to load Mpv DLL. .NET apps by default are 32-bit so make sure you're loading the 32-bit DLL.");
-		    }
+            dllHandle = PlatformDll.Utils.LoadLibrary(dllPath);
+            if (dllHandle == IntPtr.Zero)
+                throw new MpvAPIException("Failed to load Mpv DLL. .NET apps by default are 32-bit so make sure you're loading the 32-bit DLL.");
+        }
 
         private void LoadFunctions()
         {
@@ -79,6 +81,7 @@ namespace Mpv.NET.API
             SetOptionString = LoadFunction<MpvSetOptionString>("mpv_set_option_string");
             Command = LoadFunction<MpvCommand>("mpv_command");
             CommandAsync = LoadFunction<MpvCommandAsync>("mpv_command_async");
+            AbortAsyncCommand = LoadFunction<MpvAbortAsyncCommand>("mpv_abort_async_command");
             SetProperty = LoadFunction<MpvSetProperty>("mpv_set_property");
             SetPropertyString = LoadFunction<MpvSetPropertyString>("mpv_set_property_string");
             SetPropertyAsync = LoadFunction<MpvSetPropertyAsync>("mpv_set_property_async");
@@ -94,8 +97,9 @@ namespace Mpv.NET.API
             WaitEvent = LoadFunction<MpvWaitEvent>("mpv_wait_event");
             Wakeup = LoadFunction<MpvWakeup>("mpv_wakeup");
             SetWakeupCallback = LoadFunction<MpvSetWakeupCallback>("mpv_set_wakeup_callback");
-            GetWakeupPipe = LoadFunction<MpvGetWakeupPipe>("mpv_get_wakeup_pipe");
             WaitAsyncRequests = LoadFunction<MpvWaitAsyncRequests>("mpv_wait_async_requests");
+            HookAdd = LoadFunction<MpvHookAdd>("mpv_hook_add");
+            HookContinue = LoadFunction<MpvHookContinue>("mpv_hook_continue");
 
             GetPropertyDouble = LoadFunction<MpvGetPropertyDouble>("mpv_get_property");
             GetPropertyLong = LoadFunction<MpvGetPropertyLong>("mpv_get_property");
@@ -114,7 +118,7 @@ namespace Mpv.NET.API
         {
             Dispose(true);
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

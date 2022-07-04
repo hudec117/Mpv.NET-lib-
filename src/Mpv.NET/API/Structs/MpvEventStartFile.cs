@@ -3,14 +3,8 @@
 namespace Mpv.NET.API
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct MpvEventEndFile
+    public struct MpvEventStartFile
     {
-        public MpvEndFileReason Reason;
-
-        public MpvError Error;
-
         public ulong PlaylistEntryId;
-
-        public int PlaylistInsertNumEntries;
     }
 }

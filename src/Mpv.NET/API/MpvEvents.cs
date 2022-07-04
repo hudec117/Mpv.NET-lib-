@@ -50,7 +50,7 @@ namespace Mpv.NET.API
 
         private void EventCallback(MpvEvent @event)
         {
-            var eventId = @event.ID;
+            var eventId = @event.Id;
             switch (eventId)
             {
                 // Events that can be "handled"
@@ -99,17 +99,11 @@ namespace Mpv.NET.API
                 case MpvEventID.TrackSwitched:
                     InvokeSimple(TrackSwitched);
                     break;
-                case MpvEventID.Idle:
-                    InvokeSimple(Idle);
-                    break;
                 case MpvEventID.Pause:
                     InvokeSimple(Pause);
                     break;
                 case MpvEventID.Unpause:
                     InvokeSimple(Unpause);
-                    break;
-                case MpvEventID.Tick:
-                    InvokeSimple(Tick);
                     break;
                 case MpvEventID.ScriptInputDispatch:
                     InvokeSimple(ScriptInputDispatch);

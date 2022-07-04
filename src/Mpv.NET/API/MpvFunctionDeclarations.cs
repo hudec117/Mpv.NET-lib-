@@ -37,13 +37,15 @@ namespace Mpv.NET.API
     public delegate IntPtr MpvCreateClient(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler))]
-        out string name);
+        out string name
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvLoadConfigFile(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string fileName);
+        string fileName
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate long MpvGetTimeUs(IntPtr mpvHandle);
@@ -54,7 +56,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        IntPtr data);
+        IntPtr data
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvSetOptionString(
@@ -62,7 +65,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string data);
+        string data
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvCommand(IntPtr mpvHandle, IntPtr args);
@@ -71,12 +75,16 @@ namespace Mpv.NET.API
     public delegate MpvError MpvCommandAsync(IntPtr mpvHandle, ulong replyUserData, IntPtr args);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate MpvError MpvAbortAsyncCommand(IntPtr mpvHandle, ulong replyUserData);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvSetProperty(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        IntPtr data);
+        IntPtr data
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvSetPropertyString(
@@ -84,7 +92,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string data);
+        string data
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvSetPropertyAsync(
@@ -93,7 +102,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        IntPtr data);
+        IntPtr data
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvGetProperty(
@@ -101,7 +111,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        out IntPtr data);
+        out IntPtr data
+    );
 
     // Todo: Figure out how to free the pointer for the return value using mpv_free inside a custom marshaler. Until then
     // we'll have to keep the IntPtr. Same goes for the OSD variant below.
@@ -109,13 +120,15 @@ namespace Mpv.NET.API
     public delegate IntPtr MpvGetPropertyString(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string name);
+        string name
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr MpvGetPropertyOSDString(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string name);
+        string name
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvGetPropertyAsync(
@@ -123,7 +136,8 @@ namespace Mpv.NET.API
         ulong replyUserData,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
-        MpvFormat format);
+        MpvFormat format
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvObserveProperty(
@@ -131,7 +145,8 @@ namespace Mpv.NET.API
         ulong replyUserData,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
-        MpvFormat format);
+        MpvFormat format
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate int MpvUnobserveProperty(IntPtr mpvHandle, ulong registeredReplyUserData);
@@ -145,13 +160,15 @@ namespace Mpv.NET.API
         IntPtr mpvHandle,
         MpvEventID eventID,
         [MarshalAs(UnmanagedType.I1)]
-        bool enable);
+        bool enable
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvRequestLogMessages(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
-        string minLevel);
+        string minLevel
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr MpvWaitEvent(IntPtr mpvHandle, double timeout);
@@ -164,13 +181,26 @@ namespace Mpv.NET.API
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.FunctionPtr)]
         MpvWakeupCallback cb,
-        IntPtr d);
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate int MpvGetWakeupPipe(IntPtr mpvHandle);
+        IntPtr d
+     );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void MpvWaitAsyncRequests(IntPtr mpvHandle);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate MpvError MpvHookAdd(
+        IntPtr mpvHandle,
+        ulong replyUserData,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
+        string name,
+        int priority
+     );
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate MpvError MpvHookContinue(
+        IntPtr mpvHandle,
+        ulong id
+     );
 
     // Not strictly part of the C API but are used to invoke mpv_get_property with other value data types.
 
@@ -180,7 +210,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        out double data);
+        out double data
+     );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvGetPropertyLong(
@@ -188,7 +219,8 @@ namespace Mpv.NET.API
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
         string name,
         MpvFormat format,
-        out long data);
+        out long data
+     );
 
     // Other
 

@@ -7,7 +7,7 @@ namespace Mpv.NET.API
     [StructLayout(LayoutKind.Sequential)]
     public struct MpvEvent
     {
-        public MpvEventID ID;
+        public MpvEventID Id;
 
         public MpvError Error;
 

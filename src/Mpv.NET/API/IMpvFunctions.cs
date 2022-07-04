@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mpv.NET.API
+﻿namespace Mpv.NET.API
 {
     public interface IMpvFunctions
     {
@@ -19,6 +17,7 @@ namespace Mpv.NET.API
         MpvSetOptionString SetOptionString { get; }
         MpvCommand Command { get; }
         MpvCommandAsync CommandAsync { get; }
+        MpvAbortAsyncCommand AbortAsyncCommand { get; }
         MpvSetProperty SetProperty { get; }
         MpvSetPropertyString SetPropertyString { get; }
         MpvSetPropertyAsync SetPropertyAsync { get; }
@@ -34,8 +33,9 @@ namespace Mpv.NET.API
         MpvWaitEvent WaitEvent { get; }
         MpvWakeup Wakeup { get; }
         MpvSetWakeupCallback SetWakeupCallback { get; }
-        MpvGetWakeupPipe GetWakeupPipe { get; }
         MpvWaitAsyncRequests WaitAsyncRequests { get; }
+        MpvHookAdd HookAdd { get; }
+        MpvHookContinue HookContinue { get; }
 
         MpvGetPropertyDouble GetPropertyDouble { get; }
         MpvGetPropertyLong GetPropertyLong { get; }

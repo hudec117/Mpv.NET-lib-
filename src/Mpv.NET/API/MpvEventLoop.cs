@@ -87,7 +87,7 @@ namespace Mpv.NET.API
                 if (eventPtr != IntPtr.Zero)
                 {
                     var @event = MpvMarshal.PtrToStructure<MpvEvent>(eventPtr);
-                    if (@event.ID != MpvEventID.None)
+                    if (@event.Id != MpvEventID.None)
                         Callback?.Invoke(@event);
                 }
             }

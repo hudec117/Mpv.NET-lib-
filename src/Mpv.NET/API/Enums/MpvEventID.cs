@@ -13,10 +13,8 @@
         FileLoaded = 8,
         TracksChanged = 9,
         TrackSwitched = 10,
-        Idle = 11,
         Pause = 12,
         Unpause = 13,
-        Tick = 14,
         ScriptInputDispatch = 15,
         ClientMessage = 16,
         VideoReconfig = 17,
@@ -26,6 +24,7 @@
         PlaybackRestart = 21,
         PropertyChange = 22,
         ChapterChange = 23,
-        QueueOverflow = 24
+        QueueOverflow = 24,
+        EventHook = 25
     }
 }
