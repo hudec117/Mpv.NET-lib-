@@ -140,6 +140,13 @@ namespace Mpv.NET.Player
                     return (int)mpv.GetPropertyLong("playlist-pos");
                 }
             }
+            set
+            {
+                lock (mpvLock)
+                {
+                    mpv.SetPropertyLong("playlist-pos", value);
+                }
+            }
         }
 
         /// <summary>
