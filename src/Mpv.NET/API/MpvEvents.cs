@@ -9,8 +9,9 @@ namespace Mpv.NET.API
         public event EventHandler<MpvGetPropertyReplyEventArgs> GetPropertyReply;
         public event EventHandler<MpvSetPropertyReplyEventArgs> SetPropertyReply;
         public event EventHandler<MpvCommandReplyEventArgs> CommandReply;
-        public event EventHandler StartFile;
+        public event EventHandler<MpvStartFileEventArgs> StartFile;
         public event EventHandler<MpvEndFileEventArgs> EndFile;
+        public event EventHandler<MpvEventHookEventArgs> EventHook;
         public event EventHandler FileLoaded;
 
         [Obsolete("Deprecated in favour of ObserveProperty on \"track-list\".")]
@@ -69,6 +70,9 @@ namespace Mpv.NET.API
                 case MpvEventID.CommandReply:
                     HandleCommandReply(@event);
                     break;
+                case MpvEventID.StartFile:
+                    HandleStartFile(@event);
+                    break;
                 case MpvEventID.EndFile:
                     HandleEndFile(@event);
                     break;
@@ -77,6 +81,9 @@ namespace Mpv.NET.API
                     break;
                 case MpvEventID.PropertyChange:
                     HandlePropertyChange(@event);
+                    break;
+                case MpvEventID.EventHook:
+                    HandleEventHook(@event);
                     break;
 
                 // Todo: Find a better/shorter way of doing this?
@@ -87,9 +94,6 @@ namespace Mpv.NET.API
                 // it.
 
                 // All other simple notification events.
-                case MpvEventID.StartFile:
-                    InvokeSimple(StartFile);
-                    break;
                 case MpvEventID.FileLoaded:
                     InvokeSimple(FileLoaded);
                     break;
@@ -191,6 +195,19 @@ namespace Mpv.NET.API
             CommandReply.Invoke(this, eventArgs);
         }
 
+        private void HandleStartFile(MpvEvent @event)
+        {
+            if (StartFile == null)
+                return;
+
+            var eventStartFile = @event.MarshalDataToStruct<MpvEventStartFile>();
+            if (eventStartFile.HasValue)
+            {
+                var eventArgs = new MpvStartFileEventArgs(eventStartFile.Value);
+                StartFile.Invoke(this, eventArgs);
+            }
+        }
+
         private void HandleEndFile(MpvEvent @event)
         {
             if (EndFile == null)
@@ -229,6 +246,19 @@ namespace Mpv.NET.API
 
                 var eventArgs = new MpvPropertyChangeEventArgs(replyUserData, eventProperty.Value);
                 PropertyChange.Invoke(this, eventArgs);
+            }
+        }
+
+        private void HandleEventHook(MpvEvent @event)
+        {
+            if (EventHook == null)
+                return;
+
+            var eventHook = @event.MarshalDataToStruct<MpvEventHook>();
+            if (eventHook.HasValue)
+            {
+                var eventArgs = new MpvEventHookEventArgs(eventHook.Value);
+                EventHook.Invoke(this, eventArgs);
             }
         }
 

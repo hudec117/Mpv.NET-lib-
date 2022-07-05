@@ -885,7 +885,7 @@ namespace Mpv.NET.Player
         }
 
         /// <summary>
-        /// Enable youtube-dl functionality in mpv.
+        /// Enable yt-dlp functionality in mpv.
         /// </summary>
         /// <param name="ytdlHookScriptPath">Relative or absolute path to the ytdl hook script. (usually called "ytdl_hook.lua")</param>
         /// <exception cref="FileNotFoundException">Throw when the ytdl hook script is not found.</exception>
