@@ -197,10 +197,7 @@ namespace Mpv.NET.API
      );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate MpvError MpvHookContinue(
-        IntPtr mpvHandle,
-        ulong id
-     );
+    public delegate MpvError MpvHookContinue(IntPtr mpvHandle, ulong id);
 
     // Not strictly part of the C API but are used to invoke mpv_get_property with other value data types.
 
