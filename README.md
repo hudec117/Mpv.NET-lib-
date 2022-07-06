@@ -2,14 +2,9 @@
 
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
->Hello everyone!
-
->I developed this library a few years ago for another project of mine. Ever since I completed that project I have not been able to maintain this repository and investigate the issues. I know that a lot of you find this library useful and I want it to continue but I am not able to dedicate time towards it any more.
-
->If anyone is interested in maintaining this repository, reviewing pull requests and investigating issues. I would be more than happy to give you the right permissions to do that. I will also happily publish new version of the package on Nuget to make sure everyone can continue to enjoy the updates.
-
-.NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms and WPF
+.NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms, WPF and Avalonia.
 
 #### Player Features
 
@@ -44,7 +39,7 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 To use the API wrapper (and player) you will need libmpv.
 
-1. Download libmpv from [here](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/).
+1. Download the latest libmpv from [here](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/).
    * Either "i686" if your app is 32-bit or "x86_64" if your app is 64-bit
 2. Extract "mpv-2.dll" from the archive into your project.
     (A "lib" folder in your project is common practice)
@@ -77,7 +72,7 @@ If you have any doubts or questions regarding this process, please feel free to 
 
 ## Player
 
-This player was designed to work on Windows and tested in WPF and WinForms.
+This player was designed to work on Windows and tested in WPF and WinForms. As of version 2, support for Linux and Avalonia was added but not extensively tested.
 
 To overlay controls over the top of the player please start with this [Stack Overflow post](https://stackoverflow.com/questions/5978917/render-wpf-control-on-top-of-windowsformshost).
 
