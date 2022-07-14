@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace Mpv.NET.API
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct MpvEventClientMessage
-	{
-		public int NumArgs;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MpvEventClientMessage
+    {
+        public int NumArgs;
 
-		public IntPtr Args;
-	}
+        public IntPtr Args;
+    }
 }

@@ -5,108 +5,110 @@ using System.Threading.Tasks;
 
 namespace Mpv.NET.Player
 {
-	public interface IMpvPlayer
-	{
-		API.Mpv API { get; }
+    public interface IMpvPlayer
+    {
+        API.Mpv API { get; }
 
-		string LibMpvPath { get; }
+        string LibMpvPath { get; }
 
-		string MediaTitle { get; }
+        string MediaTitle { get; }
 
-		bool AutoPlay { get; set; }
+        bool AutoPlay { get; set; }
 
-		bool IsMediaLoaded { get; }
+        bool IsMediaLoaded { get; }
 
-		bool IsPlaying { get; }
+        bool IsPlaying { get; }
 
-		bool IsPausedForCache { get; }
+        bool IsPausedForCache { get; }
 
-		double CacheDuration { get; }
+        double CacheDuration { get; }
 
-		MpvLogLevel LogLevel { get; set; }
+        MpvLogLevel LogLevel { get; set; }
 
-		YouTubeDlVideoQuality YouTubeDlVideoQuality { get; set; }
+        YouTubeDlVideoQuality YouTubeDlVideoQuality { get; set; }
 
-		int PlaylistEntryCount { get; }
+        int PlaylistEntryCount { get; }
 
-		int PlaylistIndex { get; }
+        int PlaylistIndex { get; }
 
-		KeepOpen KeepOpen { get; set; }
+        KeepOpen KeepOpen { get; set; }
 
-		bool Loop { get; set; }
+        bool Loop { get; set; }
 
-		bool LoopPlaylist { get; set; }
+        bool LoopPlaylist { get; set; }
 
-		bool EndReached { get; }
+        bool EndReached { get; }
 
-		TimeSpan Duration { get; }
+        TimeSpan Duration { get; }
 
-		TimeSpan Position { get; }
+        TimeSpan Position { get; }
 
-		TimeSpan Remaining { get; }
+        TimeSpan Remaining { get; }
 
-		int Volume { get; set; }
+        int Volume { get; set; }
 
-		double Speed { get; set; }
+        double Speed { get; set; }
 
-		event EventHandler MediaResumed;
+        IReadOnlyList<string> CurrentPlaylist { get; }
 
-		event EventHandler MediaPaused;
+        event EventHandler MediaResumed;
 
-		event EventHandler MediaStartedBuffering;
+        event EventHandler MediaPaused;
 
-		event EventHandler MediaEndedBuffering;
+        event EventHandler MediaStartedBuffering;
 
-		event EventHandler MediaLoaded;
+        event EventHandler MediaEndedBuffering;
 
-		event EventHandler MediaUnloaded;
+        event EventHandler MediaLoaded;
 
-		event EventHandler MediaFinished;
+        event EventHandler MediaUnloaded;
 
-		event EventHandler MediaError;
+        event EventHandler MediaFinished;
 
-		event EventHandler MediaStartedSeeking;
+        event EventHandler MediaError;
 
-		event EventHandler MediaEndedSeeking;
+        event EventHandler MediaStartedSeeking;
 
-		event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged;
+        event EventHandler MediaEndedSeeking;
 
-		void Load(string path, bool force = false);
+        event EventHandler<MpvPlayerPositionChangedEventArgs> PositionChanged;
 
-		void LoadPlaylist(IEnumerable<string> paths, bool force = false);
+        void Load(string path, bool force = false);
 
-		Task SeekAsync(double position, bool relative = false);
+        void LoadPlaylist(IEnumerable<string> paths, bool force = false);
 
-		Task SeekAsync(TimeSpan position, bool relative = false);
+        Task SeekAsync(double position, bool relative = false);
 
-		void Resume();
+        Task SeekAsync(TimeSpan position, bool relative = false);
 
-		void Pause();
+        void Resume();
 
-		void Stop();
+        void Pause();
 
-		Task RestartAsync();
+        void Stop();
 
-		void AddAudio(string path);
+        Task RestartAsync();
 
-		bool PlaylistNext();
+        void AddAudio(string path);
 
-		bool PlaylistPrevious();
+        bool PlaylistNext();
 
-		bool PlaylistRemove();
+        bool PlaylistPrevious();
 
-		bool PlaylistRemove(int index);
+        bool PlaylistRemove();
 
-		bool PlaylistMove(int oldIndex, int newIndex);
+        bool PlaylistRemove(int index);
 
-		void PlaylistClear();
+        bool PlaylistMove(int oldIndex, int newIndex);
 
-		void EnableYouTubeDl();
+        void PlaylistClear();
 
-		void EnableYouTubeDl(string ytdlHookScriptPath);
+        void EnableYouTubeDl();
 
-		void NextFrame();
+        void EnableYouTubeDl(string ytdlHookScriptPath);
 
-		void PreviousFrame();
-	}
+        void NextFrame();
+
+        void PreviousFrame();
+    }
 }

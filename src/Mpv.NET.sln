@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpv.NET.WPFExample", "Mpv.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpv.NET.WinFormsExample", "Mpv.NET.WinFormsExample\Mpv.NET.WinFormsExample.csproj", "{359B1FAB-E90E-40E3-A285-BCE50F671E14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpv.NET.Avalonia", "Mpv.NET.Avalonia\Mpv.NET.Avalonia.csproj", "{79E3AAF8-9700-4E32-AAFA-051889240AA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpv.NET.AvaloniaExample", "Mpv.NET.AvaloniaExample\Mpv.NET.AvaloniaExample.csproj", "{CCAC1F94-CFBB-4795-8408-B9A0EE504B2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{359B1FAB-E90E-40E3-A285-BCE50F671E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{359B1FAB-E90E-40E3-A285-BCE50F671E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{359B1FAB-E90E-40E3-A285-BCE50F671E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79E3AAF8-9700-4E32-AAFA-051889240AA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E3AAF8-9700-4E32-AAFA-051889240AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E3AAF8-9700-4E32-AAFA-051889240AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E3AAF8-9700-4E32-AAFA-051889240AA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCAC1F94-CFBB-4795-8408-B9A0EE504B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCAC1F94-CFBB-4795-8408-B9A0EE504B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCAC1F94-CFBB-4795-8408-B9A0EE504B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCAC1F94-CFBB-4795-8408-B9A0EE504B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

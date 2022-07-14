@@ -2,14 +2,9 @@
 
 [![Version](https://img.shields.io/nuget/v/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
 [![Downloads](https://img.shields.io/nuget/dt/Mpv.NET.svg?style=flat-square)](https://www.nuget.org/packages/Mpv.NET/)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
->Hello everyone!
-
->I developed this library a few years ago for another project of mine. Ever since I completed that project I have not been able to maintain this repository and investigate the issues. I know that a lot of you find this library useful and I want it to continue but I am not able to dedicate time towards it any more.
-
->If anyone is interested in maintaining this repository, reviewing pull requests and investigating issues. I would be more than happy to give you the right permissions to do that. I will also happily publish new version of the package on Nuget to make sure everyone can continue to enjoy the updates.
-
-.NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms and WPF
+.NET embeddable video/media player based on [mpv](https://github.com/mpv-player/mpv) for WinForms, WPF and Avalonia.
 
 #### Player Features
 
@@ -22,7 +17,8 @@
 * Logging from mpv
 * Add separate audio track
 * Playlist - Load, Next, Previous, Move, Remove or Clear
-* Optional [youtube-dl](https://rg3.github.io/youtube-dl/index.html) support to play videos from [hundreds of video sites](https://rg3.github.io/youtube-dl/supportedsites.html).
+* Avalonia support for cross-platform UI
+* Optional [yt-dlp](https://github.com/yt-dlp/yt-dlp) support to play videos from [hundreds of video sites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
     * Change the desired video quality.
 
 #### Notes:
@@ -43,9 +39,9 @@ This package is available via [NuGet](https://www.nuget.org/packages/Mpv.NET).
 
 To use the API wrapper (and player) you will need libmpv.
 
-1. Download libmpv from [here](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/).
+1. Download the latest libmpv from [here](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/).
    * Either "i686" if your app is 32-bit or "x86_64" if your app is 64-bit
-2. Extract "mpv-1.dll" from the archive into your project.
+2. Extract "mpv-2.dll" from the archive into your project.
     (A "lib" folder in your project is common practice)
 3. Include the DLL in your IDE and instruct your build system to copy the DLL to output.
     * In Visual Studio:
@@ -56,39 +52,33 @@ To use the API wrapper (and player) you will need libmpv.
 
 If you wish to compile libmpv yourself, there is a [guide](https://github.com/mpv-player/mpv/blob/master/DOCS/compile-windows.md) available in the mpv repository.
 
-### youtube-dl
+### yt-dlp
 
-To enable youtube-dl functionality in the player you will need the youtube-dl executable and the ytdl hook script from mpv which allows mpv to communicate with youtube-dl.
+To enable yt-dlp functionality in the player you will need the yt-dlp executable and the ytdl hook script from mpv which allows mpv to communicate with yt-dlp.
 
-1. Download the "youtube-dl.exe" executable from [here](https://rg3.github.io/youtube-dl/download.html).
+1. Download the "yt-dlp.exe" executable from [here](https://github.com/yt-dlp/yt-dlp#release-files).
 2. Download the "ytdl_hook.lua" script from [here](https://github.com/mpv-player/mpv/blob/master/player/lua/ytdl_hook.lua).
 3. Copy both files to your "lib" folder you made for libmpv.
-4. Follow step #3 in the libmpv section but perform the steps on the "ytdl_hook.lua" script and "youtube-dl.exe" executable instead.
-5. Near the start of the file, change the declaration of "ytdl" so it looks like this:
-```lua
-local ytdl = {
-    path = "lib\\youtube-dl.exe",
-    searched = false,
-    blacklisted = {}
-}
-```
-6. In your code, you will need to call the `EnableYouTubeDl` method on an instance of `MpvPlayer`.
+4. Follow step #3 in the libmpv section (above) but perform the steps on the "ytdl_hook.lua" script and "yt-dlp.exe" executable instead.
+5. In your code, you will need to call the `EnableYouTubeDl` method on an instance of `MpvPlayer`.
     * If you placed your "ytdl_hook.lua" script somewhere other than the "lib" folder, you will need to pass the relative (to your apps executable) or absolute path of the script to `EnableYouTubeDl`.
-7. Done!
+6. Done!
 
-To keep youtube-dl functionality working:
-* Regularly update the "youtube-dl.exe" executable with latest version.
+To keep yt-dlp functionality working:
+* Regularly update the "yt-dlp.exe" executable with latest version.
 * Regularly update the "ytdl_hook.lua" script with the latest version.
 
 If you have any doubts or questions regarding this process, please feel free to open an issue.
 
 ## Player
 
-This player was designed to work on Windows and tested in WPF and WinForms. Not tested on other platforms.
+This player was designed to work on Windows and tested in WPF and WinForms. As of version 2, support for Linux and Avalonia was added but not extensively tested.
 
 To overlay controls over the top of the player please start with this [Stack Overflow post](https://stackoverflow.com/questions/5978917/render-wpf-control-on-top-of-windowsformshost).
 
-If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https://github.com/mysteryx93/MediaPlayerUI.NET). :)
+If you're looking for a media player UI, I'd recommend [MediaPlayerUI.NET](https://github.com/mysteryx93/MediaPlayerUI.NET).
+
+There is a Avalonia `VideoView` component available that you can get by installing the [Mpv.NET.Avalonia]() Nuget package.
 
 ### Initialisation
 
@@ -152,9 +142,13 @@ You can use any WinForms control, just pass the `Handle` property to the `MpvPla
 
 See [Mpv.NET.WinFormsExample](https://github.com/hudec117/Mpv.NET/tree/master/src/Mpv.NET.WinFormsExample) project for a basic example.
 
-### youtube-dl settings
+### Avalonia
 
-You have the option to set the desired quality of the media you're trying to play using youtube-dl.
+
+
+### yt-dlp settings
+
+You have the option to set the desired quality of the media you're trying to play using yt-dlp.
 This can be changed by setting the `YouTubeDlVideoQuality` property on an instance of `MpvPlayer`.
 Note: this will take effect on the next call of `Load`.
 
