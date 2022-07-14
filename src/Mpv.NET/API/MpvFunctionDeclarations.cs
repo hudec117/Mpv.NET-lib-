@@ -11,6 +11,9 @@ namespace Mpv.NET.API
     public delegate long MpvClientAPIVersion();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate long MpvClientId(IntPtr mpvHandle);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler))]
     public delegate string MpvErrorString(MpvError error);
 
@@ -35,6 +38,13 @@ namespace Mpv.NET.API
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr MpvCreateClient(
+        IntPtr mpvHandle,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler))]
+        out string name
+    );
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtr MpvCreateWeakClient(
         IntPtr mpvHandle,
         [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler))]
         out string name
@@ -70,6 +80,13 @@ namespace Mpv.NET.API
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvCommand(IntPtr mpvHandle, IntPtr args);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate MpvError MpvCommandString(
+        IntPtr mpvHandle,
+        [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MpvStringMarshaler), MarshalCookie = "free-com")]
+        string args
+    );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate MpvError MpvCommandAsync(IntPtr mpvHandle, ulong replyUserData, IntPtr args);
@@ -114,8 +131,6 @@ namespace Mpv.NET.API
         out IntPtr data
     );
 
-    // Todo: Figure out how to free the pointer for the return value using mpv_free inside a custom marshaler. Until then
-    // we'll have to keep the IntPtr. Same goes for the OSD variant below.
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr MpvGetPropertyString(
         IntPtr mpvHandle,

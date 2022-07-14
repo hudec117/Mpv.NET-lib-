@@ -3,6 +3,7 @@
     public interface IMpvFunctions
     {
         MpvClientAPIVersion ClientAPIVersion { get; }
+        MpvClientId ClientId { get; }
         MpvErrorString ErrorString { get; }
         MpvFree Free { get; }
         MpvClientName ClientName { get; }
@@ -11,11 +12,13 @@
         MpvDestroy Destroy { get; }
         MpvTerminateDestroy TerminateDestroy { get; }
         MpvCreateClient CreateClient { get; }
+        MpvCreateWeakClient CreateWeakClient { get; }
         MpvLoadConfigFile LoadConfigFile { get; }
         MpvGetTimeUs GetTimeUs { get; }
         MpvSetOption SetOption { get; }
         MpvSetOptionString SetOptionString { get; }
         MpvCommand Command { get; }
+        MpvCommandString CommandString { get; }
         MpvCommandAsync CommandAsync { get; }
         MpvAbortAsyncCommand AbortAsyncCommand { get; }
         MpvSetProperty SetProperty { get; }

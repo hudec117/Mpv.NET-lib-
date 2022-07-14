@@ -6,6 +6,7 @@ namespace Mpv.NET.API
     public class MpvFunctions : IMpvFunctions, IDisposable
     {
         public MpvClientAPIVersion ClientAPIVersion { get; private set; }
+        public MpvClientId ClientId { get; private set; }
         public MpvErrorString ErrorString { get; private set; }
         public MpvFree Free { get; private set; }
         public MpvClientName ClientName { get; private set; }
@@ -14,11 +15,13 @@ namespace Mpv.NET.API
         public MpvDestroy Destroy { get; private set; }
         public MpvTerminateDestroy TerminateDestroy { get; private set; }
         public MpvCreateClient CreateClient { get; private set; }
+        public MpvCreateWeakClient CreateWeakClient { get; private set; }
         public MpvLoadConfigFile LoadConfigFile { get; private set; }
         public MpvGetTimeUs GetTimeUs { get; private set; }
         public MpvSetOption SetOption { get; private set; }
         public MpvSetOptionString SetOptionString { get; private set; }
         public MpvCommand Command { get; private set; }
+        public MpvCommandString CommandString { get; private set; }
         public MpvCommandAsync CommandAsync { get; private set; }
         public MpvAbortAsyncCommand AbortAsyncCommand { get; private set; }
         public MpvSetProperty SetProperty { get; private set; }
@@ -67,6 +70,7 @@ namespace Mpv.NET.API
         private void LoadFunctions()
         {
             ClientAPIVersion = LoadFunction<MpvClientAPIVersion>("mpv_client_api_version");
+            ClientId = LoadFunction<MpvClientId>("mpv_client_id");
             ErrorString = LoadFunction<MpvErrorString>("mpv_error_string");
             Free = LoadFunction<MpvFree>("mpv_free");
             ClientName = LoadFunction<MpvClientName>("mpv_client_name");
@@ -75,11 +79,13 @@ namespace Mpv.NET.API
             Destroy = LoadFunction<MpvDestroy>("mpv_destroy");
             TerminateDestroy = LoadFunction<MpvTerminateDestroy>("mpv_terminate_destroy");
             CreateClient = LoadFunction<MpvCreateClient>("mpv_create_client");
+            CreateWeakClient = LoadFunction<MpvCreateWeakClient>("mpv_create_weak_client");
             LoadConfigFile = LoadFunction<MpvLoadConfigFile>("mpv_load_config_file");
             GetTimeUs = LoadFunction<MpvGetTimeUs>("mpv_get_time_us");
             SetOption = LoadFunction<MpvSetOption>("mpv_set_option");
             SetOptionString = LoadFunction<MpvSetOptionString>("mpv_set_option_string");
             Command = LoadFunction<MpvCommand>("mpv_command");
+            CommandString = LoadFunction<MpvCommandString>("mpv_command_string");
             CommandAsync = LoadFunction<MpvCommandAsync>("mpv_command_async");
             AbortAsyncCommand = LoadFunction<MpvAbortAsyncCommand>("mpv_abort_async_command");
             SetProperty = LoadFunction<MpvSetProperty>("mpv_set_property");

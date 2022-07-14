@@ -108,6 +108,13 @@ namespace Mpv.NET.API
             return Functions.ClientAPIVersion();
         }
 
+        public long ClientId()
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+
+            return Functions.ClientId(Handle);
+        }
+
         public string ErrorString(MpvError error)
         {
             Guard.AgainstDisposed(disposed, nameof(Mpv));
@@ -133,6 +140,17 @@ namespace Mpv.NET.API
             return new Mpv(newHandle, Functions);
         }
 
+        public Mpv CreateWeakClient()
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+
+            var newHandle = Functions.CreateWeakClient(Handle, out string name);
+            if (newHandle == IntPtr.Zero)
+                throw new MpvAPIException("Failed to create new weak client.");
+
+            return new Mpv(newHandle, Functions);
+        }
+
         public void LoadConfigFile(string absolutePath)
         {
             Guard.AgainstDisposed(disposed, nameof(Mpv));
@@ -145,7 +163,7 @@ namespace Mpv.NET.API
 
             var error = Functions.LoadConfigFile(Handle, absolutePath);
             if (error != MpvError.Success)
-                throw MpvAPIException.FromError(error, functions);
+                throw MpvAPIException.FromError(error, Functions);
         }
 
         public long GetTimeUs()
@@ -214,6 +232,16 @@ namespace Mpv.NET.API
                 MpvMarshal.FreeComPtrArray(argsPtrs);
                 Marshal.FreeCoTaskMem(argsPtr);
             }
+        }
+
+        public void CommandString(string args)
+        {
+            Guard.AgainstDisposed(disposed, nameof(Mpv));
+            Guard.AgainstNullOrEmptyOrWhiteSpaceString(args, nameof(args));
+
+            var error = Functions.CommandString(Handle, args);
+            if (error != MpvError.Success)
+                throw MpvAPIException.FromError(error, Functions);
         }
 
         public void CommandAsync(ulong replyUserData, params string[] args)
@@ -411,7 +439,7 @@ namespace Mpv.NET.API
 
             var error = Functions.RequestEvent(Handle, eventID, enabled);
             if (error != MpvError.Success)
-                throw MpvAPIException.FromError(error, functions);
+                throw MpvAPIException.FromError(error, Functions);
         }
 
         public void RequestLogMessages(MpvLogLevel logLevel)
@@ -461,7 +489,7 @@ namespace Mpv.NET.API
                 // is used to free the resources of the loaded mpv DLL.
                 // Windows.FreeLibrary MUST COME AFTER Functions.TerminarDestroy
 
-                // The event loop calls into mpv so we can't TerminateDestrot yet!
+                // The event loop calls into mpv so we can't TerminateDestroy yet!
                 if (disposing && EventLoop is IDisposable disposableEventLoop)
                     disposableEventLoop.Dispose();
 
