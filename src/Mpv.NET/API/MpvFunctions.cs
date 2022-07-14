@@ -11,7 +11,7 @@ namespace Mpv.NET.API
         public MpvClientName ClientName { get; private set; }
         public MpvCreate Create { get; private set; }
         public MpvInitialise Initialise { get; private set; }
-        public MpvDetachDestroy DetachDestroy { get; private set; }
+        public MpvDestroy Destroy { get; private set; }
         public MpvTerminateDestroy TerminateDestroy { get; private set; }
         public MpvCreateClient CreateClient { get; private set; }
         public MpvLoadConfigFile LoadConfigFile { get; private set; }
@@ -72,7 +72,7 @@ namespace Mpv.NET.API
             ClientName = LoadFunction<MpvClientName>("mpv_client_name");
             Create = LoadFunction<MpvCreate>("mpv_create");
             Initialise = LoadFunction<MpvInitialise>("mpv_initialize");
-            DetachDestroy = LoadFunction<MpvDetachDestroy>("mpv_destroy");
+            Destroy = LoadFunction<MpvDestroy>("mpv_destroy");
             TerminateDestroy = LoadFunction<MpvTerminateDestroy>("mpv_terminate_destroy");
             CreateClient = LoadFunction<MpvCreateClient>("mpv_create_client");
             LoadConfigFile = LoadFunction<MpvLoadConfigFile>("mpv_load_config_file");

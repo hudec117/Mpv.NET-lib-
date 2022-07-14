@@ -8,7 +8,7 @@
         MpvClientName ClientName { get; }
         MpvCreate Create { get; }
         MpvInitialise Initialise { get; }
-        MpvDetachDestroy DetachDestroy { get; }
+        MpvDestroy Destroy { get; }
         MpvTerminateDestroy TerminateDestroy { get; }
         MpvCreateClient CreateClient { get; }
         MpvLoadConfigFile LoadConfigFile { get; }

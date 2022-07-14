@@ -28,7 +28,7 @@ namespace Mpv.NET.API
     public delegate MpvError MpvInitialise(IntPtr mpvHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void MpvDetachDestroy(IntPtr mpvHandle);
+    public delegate void MpvDestroy(IntPtr mpvHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void MpvTerminateDestroy(IntPtr mpvHandle);
