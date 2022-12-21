@@ -437,7 +437,8 @@ namespace Mpv.NET.API
 				if (disposing && EventLoop is IDisposable disposableEventLoop)
 					disposableEventLoop.Dispose();
 
-				Functions.TerminateDestroy(Handle);
+				if (Handle != null && Handle != IntPtr.Zero)
+					Functions?.TerminateDestroy(Handle);
 
 				if (disposing && Functions is IDisposable disposableFunctions)
 					disposableFunctions.Dispose();
